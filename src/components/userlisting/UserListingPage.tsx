@@ -1,4 +1,4 @@
-// src/components/dashboard/UserListingPage.tsx
+// src/components/userlisting/UserListingPage.tsx
 
 // used in userlisting client file
 
@@ -6,10 +6,10 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import TaskCard from "./ListingCard";
-import { Task } from "@/types/listingType";
+import ListingCard from "./ListingCard";
+import { Listing } from "@/types/listingType";
 import { FunnelIcon, ArrowsUpDownIcon } from "@heroicons/react/24/outline";
-import useTaskStore, { TaskSortOption } from "@/stores/listingStore";
+import useListingStore, { ListingSortOption } from "@/stores/listingStore";
 import FilterPanel from "@/components/listing_filter/FilterPanel";
 import ActiveFilters from "@/components/listing_filter/ActiveFilters";
 
@@ -20,23 +20,23 @@ const MOBILE_ITEMS_PER_PAGE = 4; // 4 items for mobile view
 // Number of items to display in a column
 const ITEMS_PER_COLUMN = 4;
 
-const TaskManagementContent: React.FC = () => {
+const UserListingPage: React.FC = () => {
   const {
-    tasks,
-    filteredTasks,
-    taskListState,
-    fetchTasks,
+    listings,
+    filteredListings,
+    listingListState,
+    fetchListings,
     sortBy,
     setSortOption,
     filters,
     activeFilterCount,
     resetState,
-  } = useTaskStore();
+  } = useListingStore();
 
-  // Destructure loading and error from taskListState
-  const { loading, error } = taskListState;
+  // Destructure loading and error from listingListState
+  const { loading, error } = listingListState;
 
-  // Reset task list state on component unmount
+  // Reset listing list state on component unmount
 
   const router = useRouter();
   const pathname = usePathname();
@@ -117,12 +117,12 @@ const TaskManagementContent: React.FC = () => {
     }
   }, [searchParams]);
 
-  // Fetch tasks on component mount
+  // Fetch listings on component mount
   useEffect(() => {
-    // Reset task list state before fetching
-    resetState.taskList();
-    fetchTasks();
-  }, [fetchTasks, resetState]);
+    // Reset listing list state before fetching
+    resetState.listingList();
+    fetchListings();
+  }, [fetchListings, resetState]);
 
   // Reset window positions & pagination when filters change
   useEffect(() => {
@@ -156,38 +156,72 @@ const TaskManagementContent: React.FC = () => {
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  // Filter tasks based on status
-  const todoTasks = filteredTasks.filter((task) => task.status === "to do");
-  const inProgressTasks = filteredTasks.filter(
-    (task) => task.status === "in progress"
+  // Filter listings based on status
+  const todoListings = filteredListings.filter(
+    (listing) => listing.status === "to do"
   );
-  const pendingReviewTasks = filteredTasks.filter(
-    (task) => task.status === "pending review"
+  const inProgressListings = filteredListings.filter(
+    (listing) => listing.status === "in progress"
   );
-  const completedTasks = filteredTasks.filter(
-    (task) => task.status === "completed"
+  const pendingReviewListings = filteredListings.filter(
+    (listing) => listing.status === "pending review"
+  );
+  const completedListings = filteredListings.filter(
+    (listing) => listing.status === "completed"
   );
 
+  // Get Todo window listings
+  const getTodoWindowListings = () => {
+    return todoListings.slice(
+      todoWindowStart,
+      todoWindowStart + ITEMS_PER_COLUMN
+    );
+  };
+
+  // Get In Progress window listings
+  const getInProgressWindowListings = () => {
+    return inProgressListings.slice(
+      inProgressWindowStart,
+      inProgressWindowStart + ITEMS_PER_COLUMN
+    );
+  };
+
+  // Get Pending Review window listings
+  const getPendingReviewWindowListings = () => {
+    return pendingReviewListings.slice(
+      pendingReviewWindowStart,
+      pendingReviewWindowStart + ITEMS_PER_COLUMN
+    );
+  };
+
+  // Get Completed window listings
+  const getCompletedWindowListings = () => {
+    return completedListings.slice(
+      completedWindowStart,
+      completedWindowStart + ITEMS_PER_COLUMN
+    );
+  };
+
   // Set pagination based on screen size
-  const getPaginatedTasks = (taskList: Task[]) => {
+  const getPaginatedListings = (listingList: Listing[]) => {
     const itemsPerPage = isMobile
       ? MOBILE_ITEMS_PER_PAGE
       : DESKTOP_ITEMS_PER_PAGE;
     const startIndex = (currentPage - 1) * itemsPerPage;
-    return taskList.slice(startIndex, startIndex + itemsPerPage);
+    return listingList.slice(startIndex, startIndex + itemsPerPage);
   };
 
-  // Get tasks based on active tab
-  const getTasksForActiveTab = () => {
+  // Get listings based on active tab
+  const getListingsForActiveTab = () => {
     switch (activeTab) {
       case "todo":
-        return getPaginatedTasks(todoTasks);
+        return getPaginatedListings(todoListings);
       case "inprogress":
-        return getPaginatedTasks(inProgressTasks);
+        return getPaginatedListings(inProgressListings);
       case "pendingreview":
-        return getPaginatedTasks(pendingReviewTasks);
+        return getPaginatedListings(pendingReviewListings);
       case "completed":
-        return getPaginatedTasks(completedTasks);
+        return getPaginatedListings(completedListings);
       default:
         return [];
     }
@@ -198,16 +232,16 @@ const TaskManagementContent: React.FC = () => {
     let total;
     switch (activeTab) {
       case "todo":
-        total = todoTasks.length;
+        total = todoListings.length;
         break;
       case "inprogress":
-        total = inProgressTasks.length;
+        total = inProgressListings.length;
         break;
       case "pendingreview":
-        total = pendingReviewTasks.length;
+        total = pendingReviewListings.length;
         break;
       case "completed":
-        total = completedTasks.length;
+        total = completedListings.length;
         break;
       default:
         total = 0;
@@ -220,7 +254,7 @@ const TaskManagementContent: React.FC = () => {
   };
 
   // Handle sort selection
-  const handleSortChange = (option: TaskSortOption) => {
+  const handleSortChange = (option: ListingSortOption) => {
     setSortOption(option);
     setShowSortDropdown(false);
     // Reset to first page when sorting changes
@@ -244,7 +278,7 @@ const TaskManagementContent: React.FC = () => {
   };
 
   // Get sort option display text
-  const getSortDisplayText = (option: TaskSortOption) => {
+  const getSortDisplayText = (option: ListingSortOption) => {
     switch (option) {
       case "deadline-asc":
         return "Deadline (Earliest First)";
@@ -259,7 +293,7 @@ const TaskManagementContent: React.FC = () => {
       case "date-created-desc":
         return "Date Created (Newest First)";
       default:
-        return "Sort Tasks";
+        return "Sort Listings";
     }
   };
 
@@ -267,28 +301,28 @@ const TaskManagementContent: React.FC = () => {
   const tabData = [
     {
       id: "all",
-      label: "All Tasks",
-      count: filteredTasks.length,
+      label: "All Listings",
+      count: filteredListings.length,
     },
     {
       id: "todo",
       label: "To Do",
-      count: todoTasks.length,
+      count: todoListings.length,
     },
     {
       id: "inprogress",
       label: "In Progress",
-      count: inProgressTasks.length,
+      count: inProgressListings.length,
     },
     {
       id: "pendingreview",
       label: "Pending Review",
-      count: pendingReviewTasks.length,
+      count: pendingReviewListings.length,
     },
     {
       id: "completed",
       label: "Completed",
-      count: completedTasks.length,
+      count: completedListings.length,
     },
   ];
 
@@ -409,12 +443,32 @@ const TaskManagementContent: React.FC = () => {
     </div>
   );
 
+  // Render skeleton loading UI
+  const ListingSkeleton = ({ count = 4 }) => (
+    <>
+      {Array.from({ length: count }).map((_, index) => (
+        <div
+          key={index}
+          className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-gray-200 dark:border-zinc-700 p-4 h-40 animate-pulse"
+        >
+          <div className="h-5 bg-gray-200 dark:bg-zinc-700 rounded w-3/4 mb-4"></div>
+          <div className="h-5 bg-gray-200 dark:bg-zinc-700 rounded w-1/3 mb-4"></div>
+          <div className="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-1/2 mb-2"></div>
+          <div className="mt-auto flex justify-between">
+            <div className="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-1/4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-1/4"></div>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+
   return (
     <div className="space-y-6">
       {/* Filtering and sorting controls */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-          Task Management
+          Listing Management
         </h1>
         <div className="flex items-center gap-3">
           {/* Filter button */}
@@ -569,7 +623,7 @@ const TaskManagementContent: React.FC = () => {
           </div>
         </div>
 
-        {/* All Tasks View (Kanban-style) with Sliding Window Scroll */}
+        {/* All Listings View (Kanban-style) with Sliding Window Scroll */}
         {activeTab === "all" && (
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -580,50 +634,51 @@ const TaskManagementContent: React.FC = () => {
                     To Do
                   </h2>
                   <span className="rounded-full bg-gray-100 dark:bg-zinc-700 px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-gray-300">
-                    {loading ? "..." : todoTasks.length}
+                    {loading ? "..." : todoListings.length}
                   </span>
                 </div>
                 {/* Make the container scrollable with a fixed height */}
                 <div
                   ref={todoColumnRef}
-                  className="space-y-3 overflow-y-auto pr-2 custom-scrollbar task-column"
+                  className="space-y-3 overflow-y-auto pr-2 custom-scrollbar listing-column"
                   style={{ height: "640px" }}
                 >
                   {loading ? (
-                    <TaskSkeleton count={4} />
-                  ) : todoTasks.length > 0 ? (
+                    <ListingSkeleton count={4} />
+                  ) : todoListings.length > 0 ? (
                     <>
-                      {/* Sliding window of tasks */}
-                      {getTodoWindowTasks().map((task) => (
-                        <TaskCard key={task.id} task={task} />
+                      {/* Sliding window of listings */}
+                      {getTodoWindowListings().map((listing) => (
+                        <ListingCard key={listing.id} listing={listing} />
                       ))}
 
-                      {/* Loading indicator shown when loading more tasks */}
+                      {/* Loading indicator shown when loading more listings */}
                       {isTodoLoading && renderLoader()}
 
                       {/* Show a message if reach the end */}
-                      {todoWindowStart + ITEMS_PER_COLUMN >= todoTasks.length &&
-                        todoTasks.length > ITEMS_PER_COLUMN && (
+                      {todoWindowStart + ITEMS_PER_COLUMN >=
+                        todoListings.length &&
+                        todoListings.length > ITEMS_PER_COLUMN && (
                           <div className="text-center p-4 text-gray-500 dark:text-gray-400">
-                            End of tasks reached
+                            End of listings reached
                           </div>
                         )}
                     </>
                   ) : (
                     <div className="text-center p-4 text-gray-500 dark:text-gray-400">
-                      No tasks in this category
+                      No listings in this category
                     </div>
                   )}
                 </div>
                 {/* Scroll to view more */}
-                {todoTasks.length > ITEMS_PER_COLUMN && (
+                {todoListings.length > ITEMS_PER_COLUMN && (
                   <div className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
                     Scroll to view more ({todoWindowStart + 1}-
                     {Math.min(
                       todoWindowStart + ITEMS_PER_COLUMN,
-                      todoTasks.length
+                      todoListings.length
                     )}{" "}
-                    of {todoTasks.length})
+                    of {todoListings.length})
                   </div>
                 )}
               </div>
@@ -635,51 +690,51 @@ const TaskManagementContent: React.FC = () => {
                     In Progress
                   </h2>
                   <span className="rounded-full bg-gray-100 dark:bg-zinc-700 px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-gray-300">
-                    {loading ? "..." : inProgressTasks.length}
+                    {loading ? "..." : inProgressListings.length}
                   </span>
                 </div>
                 {/* Make the container scrollable with a fixed height */}
                 <div
                   ref={inProgressColumnRef}
-                  className="space-y-3 overflow-y-auto pr-2 custom-scrollbar task-column"
+                  className="space-y-3 overflow-y-auto pr-2 custom-scrollbar listing-column"
                   style={{ height: "640px" }}
                 >
                   {loading ? (
-                    <TaskSkeleton count={4} />
-                  ) : inProgressTasks.length > 0 ? (
+                    <ListingSkeleton count={4} />
+                  ) : inProgressListings.length > 0 ? (
                     <>
-                      {/* Sliding window of tasks */}
-                      {getInProgressWindowTasks().map((task) => (
-                        <TaskCard key={task.id} task={task} />
+                      {/* Sliding window of listings */}
+                      {getInProgressWindowListings().map((listing) => (
+                        <ListingCard key={listing.id} listing={listing} />
                       ))}
 
-                      {/* Loading indicator shown when loading more tasks */}
+                      {/* Loading indicator shown when loading more listings */}
                       {isInProgressLoading && renderLoader()}
 
                       {/* Show a message if reach the end */}
                       {inProgressWindowStart + ITEMS_PER_COLUMN >=
-                        inProgressTasks.length &&
-                        inProgressTasks.length > ITEMS_PER_COLUMN && (
+                        inProgressListings.length &&
+                        inProgressListings.length > ITEMS_PER_COLUMN && (
                           <div className="text-center p-4 text-gray-500 dark:text-gray-400">
-                            End of tasks reached
+                            End of listings reached
                           </div>
                         )}
                     </>
                   ) : (
                     <div className="text-center p-4 text-gray-500 dark:text-gray-400">
-                      No tasks in this category
+                      No listings in this category
                     </div>
                   )}
                 </div>
                 {/* Scroll to view more */}
-                {inProgressTasks.length > ITEMS_PER_COLUMN && (
+                {inProgressListings.length > ITEMS_PER_COLUMN && (
                   <div className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
                     Scroll to view more ({inProgressWindowStart + 1}-
                     {Math.min(
                       inProgressWindowStart + ITEMS_PER_COLUMN,
-                      inProgressTasks.length
+                      inProgressListings.length
                     )}{" "}
-                    of {inProgressTasks.length})
+                    of {inProgressListings.length})
                   </div>
                 )}
               </div>
@@ -691,51 +746,51 @@ const TaskManagementContent: React.FC = () => {
                     Pending Review
                   </h2>
                   <span className="rounded-full bg-gray-100 dark:bg-zinc-700 px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-gray-300">
-                    {loading ? "..." : pendingReviewTasks.length}
+                    {loading ? "..." : pendingReviewListings.length}
                   </span>
                 </div>
                 {/* Make the container scrollable with a fixed height */}
                 <div
                   ref={pendingReviewColumnRef}
-                  className="space-y-3 overflow-y-auto pr-2 custom-scrollbar task-column"
+                  className="space-y-3 overflow-y-auto pr-2 custom-scrollbar listing-column"
                   style={{ height: "640px" }}
                 >
                   {loading ? (
-                    <TaskSkeleton count={4} />
-                  ) : pendingReviewTasks.length > 0 ? (
+                    <ListingSkeleton count={4} />
+                  ) : pendingReviewListings.length > 0 ? (
                     <>
-                      {/* Sliding window of tasks */}
-                      {getPendingReviewWindowTasks().map((task) => (
-                        <TaskCard key={task.id} task={task} />
+                      {/* Sliding window of listings */}
+                      {getPendingReviewWindowListings().map((listing) => (
+                        <ListingCard key={listing.id} listing={listing} />
                       ))}
 
-                      {/* Loading indicator shown when loading more tasks */}
+                      {/* Loading indicator shown when loading more listings */}
                       {isPendingReviewLoading && renderLoader()}
 
                       {/* Show a message if reach the end */}
                       {pendingReviewWindowStart + ITEMS_PER_COLUMN >=
-                        pendingReviewTasks.length &&
-                        pendingReviewTasks.length > ITEMS_PER_COLUMN && (
+                        pendingReviewListings.length &&
+                        pendingReviewListings.length > ITEMS_PER_COLUMN && (
                           <div className="text-center p-4 text-gray-500 dark:text-gray-400">
-                            End of tasks reached
+                            End of listings reached
                           </div>
                         )}
                     </>
                   ) : (
                     <div className="text-center p-4 text-gray-500 dark:text-gray-400">
-                      No tasks in this category
+                      No listings in this category
                     </div>
                   )}
                 </div>
                 {/* Scroll to view more */}
-                {pendingReviewTasks.length > ITEMS_PER_COLUMN && (
+                {pendingReviewListings.length > ITEMS_PER_COLUMN && (
                   <div className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
                     Scroll to view more ({pendingReviewWindowStart + 1}-
                     {Math.min(
                       pendingReviewWindowStart + ITEMS_PER_COLUMN,
-                      pendingReviewTasks.length
+                      pendingReviewListings.length
                     )}{" "}
-                    of {pendingReviewTasks.length})
+                    of {pendingReviewListings.length})
                   </div>
                 )}
               </div>
@@ -747,51 +802,51 @@ const TaskManagementContent: React.FC = () => {
                     Completed
                   </h2>
                   <span className="rounded-full bg-gray-100 dark:bg-zinc-700 px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-gray-300">
-                    {loading ? "..." : completedTasks.length}
+                    {loading ? "..." : completedListings.length}
                   </span>
                 </div>
                 {/* Make the container scrollable with a fixed height */}
                 <div
                   ref={completedColumnRef}
-                  className="space-y-3 overflow-y-auto pr-2 custom-scrollbar task-column"
+                  className="space-y-3 overflow-y-auto pr-2 custom-scrollbar listing-column"
                   style={{ height: "640px" }}
                 >
                   {loading ? (
-                    <TaskSkeleton count={4} />
-                  ) : completedTasks.length > 0 ? (
+                    <ListingSkeleton count={4} />
+                  ) : completedListings.length > 0 ? (
                     <>
-                      {/* Sliding window of tasks */}
-                      {getCompletedWindowTasks().map((task) => (
-                        <TaskCard key={task.id} task={task} />
+                      {/* Sliding window of listings */}
+                      {getCompletedWindowListings().map((listing) => (
+                        <ListingCard key={listing.id} listing={listing} />
                       ))}
 
-                      {/* Loading indicator shown when loading more tasks */}
+                      {/* Loading indicator shown when loading more listings */}
                       {isCompletedLoading && renderLoader()}
 
                       {/* Show a message if reach the end */}
                       {completedWindowStart + ITEMS_PER_COLUMN >=
-                        completedTasks.length &&
-                        completedTasks.length > ITEMS_PER_COLUMN && (
+                        completedListings.length &&
+                        completedListings.length > ITEMS_PER_COLUMN && (
                           <div className="text-center p-4 text-gray-500 dark:text-gray-400">
-                            End of tasks reached
+                            End of listings reached
                           </div>
                         )}
                     </>
                   ) : (
                     <div className="text-center p-4 text-gray-500 dark:text-gray-400">
-                      No tasks in this category
+                      No listings in this category
                     </div>
                   )}
                 </div>
                 {/* Scroll to view more */}
-                {completedTasks.length > ITEMS_PER_COLUMN && (
+                {completedListings.length > ITEMS_PER_COLUMN && (
                   <div className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
                     Scroll to view more ({completedWindowStart + 1}-
                     {Math.min(
                       completedWindowStart + ITEMS_PER_COLUMN,
-                      completedTasks.length
+                      completedListings.length
                     )}{" "}
-                    of {completedTasks.length})
+                    of {completedListings.length})
                   </div>
                 )}
               </div>
@@ -802,22 +857,22 @@ const TaskManagementContent: React.FC = () => {
         {/* Specific Tab Views (with pagination) */}
         {activeTab !== "all" && (
           <div className="p-6 flex flex-col">
-            {/* Fixed height container for task cards */}
+            {/* Fixed height container for listing cards */}
             <div style={{ height: "680px", position: "relative" }}>
-              {/* Task grid that doesn't flex to fill space */}
+              {/* Listing grid that doesn't flex to fill space */}
               <div
                 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 content-start"
                 style={{ gridAutoRows: "160px" }}
               >
                 {loading ? (
-                  <TaskSkeleton count={12} />
-                ) : getTasksForActiveTab().length > 0 ? (
-                  getTasksForActiveTab().map((task) => (
-                    <TaskCard key={task.id} task={task} />
+                  <ListingSkeleton count={12} />
+                ) : getListingsForActiveTab().length > 0 ? (
+                  getListingsForActiveTab().map((listing) => (
+                    <ListingCard key={listing.id} listing={listing} />
                   ))
                 ) : (
                   <div className="col-span-3 flex items-center justify-center p-8 text-gray-500 dark:text-gray-400">
-                    No tasks found in this category
+                    No listings found in this category
                   </div>
                 )}
               </div>
@@ -839,4 +894,4 @@ const TaskManagementContent: React.FC = () => {
   );
 };
 
-export default TaskManagementContent;
+export default UserListingPage;
