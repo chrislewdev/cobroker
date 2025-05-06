@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1",
+    "firstName": "Admin",
+    "lastName": "One",
+    "email": "adminone@example.com",
+    "password": "123456",
+    "phone": "+1 555 123 4567",
+    "title": "Beauty Influencer",
+    "bio": "Beauty expert, content creator, and skincare enthusiast.",
+    "location": "Los Angeles, United States",
+    "country": "United States",
+    "cityState": "Los Angeles, California, United States",
+    "postalCode": "90001",
+    "taxId": "ABC123456",
+    "profilePic": "/images/photos/image-2.jpg",
+    "stats": {
+      "tasksFulfilled": 37,
+      "successScore": 98,
+      "taskRating": 4.9,
+      "responseRate": 96,
+      "lastLogin": "2025-03-19T09:15:00Z",
+      "memberSince": "2023-01-10",
+      "profileCompleteness": 100
+    }
+  }
+]
