@@ -1,4 +1,4 @@
-// stores/listingStore.ts
+// src/stores/listingStore.ts
 
 import { create } from "zustand";
 import { listingService } from "@/services/listingService";

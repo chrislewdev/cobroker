@@ -1,4 +1,4 @@
-// services/listingService.ts
+// src/services/listingService.ts
 
 // used in listingStore
 

@@ -1,4 +1,4 @@
-// components/listing_filter/FilterPanel.tsx
+// src/components/listing_filter/FilterPanel.tsx
 
 // filter panel, used in filter related components
 

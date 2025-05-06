@@ -1,4 +1,4 @@
-// components/ui_blocks/SocialIcons.tsx
+// src/components/ui_blocks/SocialIcons.tsx
 
 export function XIcon(props: React.ComponentPropsWithoutRef<"svg">) {
   return (

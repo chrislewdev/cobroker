@@ -1,4 +1,4 @@
-// services/profileService.ts
+// src/services/profileService.ts
 
 // used in profileStore
 

@@ -1,4 +1,4 @@
-// src/app/userdashboard/userprofile/components/EditPersonalInfo.tsx
+// src/components/userprofile/EditPersonalInfo.tsx
 
 import React, { useState, useEffect } from "react";
 import FormField from "@/components/ui_blocks/FormField";

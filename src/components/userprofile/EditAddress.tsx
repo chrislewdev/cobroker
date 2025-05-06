@@ -1,4 +1,4 @@
-// src/app/userdashboard/userprofile/components/EditAddress.tsx
+// src/components/userprofile/EditAddress.tsx
 
 import React, { useState, useEffect } from "react";
 import FormField from "@/components/ui_blocks/FormField";

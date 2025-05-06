@@ -1,4 +1,4 @@
-// services/authService.ts
+// src/services/authService.ts
 
 // used in authStore
 

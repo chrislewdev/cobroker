@@ -1,4 +1,4 @@
-// app/userdashboard/userprofile/page.tsx
+// src/app/userdashboard/userprofile/page.tsx
 
 import React from "react";
 import DashboardClientPage from "./client-page";

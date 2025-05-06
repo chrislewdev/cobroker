@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
 import useListingStore from "@/stores/listingStore";
 import { useSearchParams } from "next/navigation";
 import { useResetOnUnmount } from "@/hooks/useStateReset";
-import { UserListingPage } from "@/components/userlisting/UserListingPage";
+import UserListingPage from "@/components/userlisting/UserListingPage";
 
 export default function ListingsPageClient() {
   const { setSortOption, resetState } = useListingStore();

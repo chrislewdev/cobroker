@@ -1,4 +1,4 @@
-// components/listing_filter/ActiveFilters.tsx
+// src/components/listing_filter/ActiveFilters.tsx
 
 // show active filter, used in filter related components
 

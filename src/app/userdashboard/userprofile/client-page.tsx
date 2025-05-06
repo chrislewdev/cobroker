@@ -11,8 +11,8 @@ import {
   TikTokIcon,
   XiaohongshuIcon,
 } from "@/components/ui_blocks/SocialIcons";
-import EditPersonalInfo from "./EditPersonalInfo";
-import EditAddress from "./EditAddress";
+import EditPersonalInfo from "@/components/userprofile/EditPersonalInfo";
+import EditAddress from "@/components/userprofile/EditAddress";
 import useAuthStore from "@/stores/authStore";
 import useProfileStore from "@/stores/profileStore";
 import { useResetOnUnmount } from "@/hooks/useStateReset";
