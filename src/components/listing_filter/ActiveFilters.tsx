@@ -1,10 +1,10 @@
-// components/tasks/ActiveFilters.tsx
+// components/listing_filter/ActiveFilters.tsx
 
 // show active filter, used in filter related components
 
 import React from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import useTaskStore, { TaskFilters } from "@/stores/taskStore";
+import useListingStore, { ListingFilters } from "@/stores/listingStore";
 
 interface ActiveFiltersProps {
   resetPage: () => void;
@@ -12,7 +12,7 @@ interface ActiveFiltersProps {
 
 const ActiveFilters: React.FC<ActiveFiltersProps> = ({ resetPage }) => {
   const { filters, clearFilter, clearFilters, activeFilterCount } =
-    useTaskStore();
+    useListingStore();
 
   // If no active filters, don't render
   if (activeFilterCount === 0) return null;
@@ -36,8 +36,8 @@ const ActiveFilters: React.FC<ActiveFiltersProps> = ({ resetPage }) => {
                 (p) => p !== priority
               );
               clearFilter("priority");
-              useTaskStore.getState().setFilter("priority", newPriorities);
-              useTaskStore.getState().applyFilters();
+              useListingStore.getState().setFilter("priority", newPriorities);
+              useListingStore.getState().applyFilters();
               resetPage();
             }}
             className="ml-1 focus:outline-none"
@@ -59,8 +59,8 @@ const ActiveFilters: React.FC<ActiveFiltersProps> = ({ resetPage }) => {
             onClick={() => {
               const newTopics = filters.topics.filter((t) => t !== topic);
               clearFilter("topics");
-              useTaskStore.getState().setFilter("topics", newTopics);
-              useTaskStore.getState().applyFilters();
+              useListingStore.getState().setFilter("topics", newTopics);
+              useListingStore.getState().applyFilters();
               resetPage();
             }}
             className="ml-1 focus:outline-none"
@@ -82,8 +82,8 @@ const ActiveFilters: React.FC<ActiveFiltersProps> = ({ resetPage }) => {
             onClick={() => {
               const newSubjects = filters.subjects.filter((s) => s !== subject);
               clearFilter("subjects");
-              useTaskStore.getState().setFilter("subjects", newSubjects);
-              useTaskStore.getState().applyFilters();
+              useListingStore.getState().setFilter("subjects", newSubjects);
+              useListingStore.getState().applyFilters();
               resetPage();
             }}
             className="ml-1 focus:outline-none"
@@ -102,7 +102,7 @@ const ActiveFilters: React.FC<ActiveFiltersProps> = ({ resetPage }) => {
           <button
             onClick={() => {
               clearFilter("budgetRange");
-              useTaskStore.getState().applyFilters();
+              useListingStore.getState().applyFilters();
               resetPage();
             }}
             className="ml-1 focus:outline-none"
@@ -142,7 +142,7 @@ function getPriorityChipColor(priority: string): string {
 }
 
 // Helper function to format budget range
-function formatBudgetRange(budgetRange: TaskFilters["budgetRange"]): string {
+function formatBudgetRange(budgetRange: ListingFilters["budgetRange"]): string {
   const { min, max } = budgetRange;
 
   if (min === 0 && max === 500) return "Under $500";

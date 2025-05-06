@@ -1,4 +1,4 @@
-// src/types/task.ts
+// src/types/listingType.ts
 
 export interface Listing {
   id: string;
@@ -17,7 +17,7 @@ export interface Listing {
   status: "to do" | "in progress" | "completed" | "pending review";
 }
 
-export type TaskStatus =
+export type ListingStatus =
   | "to do"
   | "in progress"
   | "completed"

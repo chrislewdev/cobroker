@@ -1,22 +1,22 @@
-// src/components/dashboard/ListingCard.tsx
+// src/components/userlisting/ListingCard.tsx
 
-// listingcard component used in ListingMainContent.tsx
+// ListingCard component used in ListingMainContent.tsx
 
 import React from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/utils/utils";
 import { Listing } from "@/types/listingType";
 
-interface TaskCardProps {
-  task: Listing;
+interface ListingCardProps {
+  listing: Listing;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
+const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    // Always navigate to the dashboard task detail page
-    router.push(`/userdashboard/tasks/${task.id}`);
+    // Always navigate to the dashboard listing detail page
+    router.push(`/userdashboard/listings/${listing.id}`);
   };
 
   // Format the deadline date without using date-fns
@@ -93,30 +93,30 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
       onClick={handleClick}
     >
       <h3 className="font-medium text-gray-900 dark:text-white mb-2 line-clamp-2">
-        {task.title}
+        {listing.title}
       </h3>
 
       {/* Topic directly below title */}
       <div
         className={cn(
           "text-sm px-2.5 py-1 rounded-full w-fit mb-2",
-          getTopicColor(task.topic)
+          getTopicColor(listing.topic)
         )}
       >
-        {task.topic}
+        {listing.topic}
       </div>
 
       {/* Deadline and budget at the bottom */}
       <div className="mt-auto flex justify-between">
         <div className="text-sm text-gray-500 dark:text-gray-400">
-          Due: {formatDate(task.deadline)}
+          Due: {formatDate(listing.deadline)}
         </div>
         <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          ${task.budget.toLocaleString()}
+          ${listing.budget.toLocaleString()}
         </div>
       </div>
     </div>
   );
 };
 
-export default TaskCard;
+export default ListingCard;

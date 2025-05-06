@@ -2,38 +2,41 @@
 
 // used in listingStore
 
-import { Task } from "@/stores/listingStore";
+import { Listing } from "@/stores/listingStore";
 import { apiSimulation } from "@/services/apiSimulation";
 
 // Service layer that interfaces with the API (simulation for now)
-export const taskService = {
-  // Fetch all tasks
-  async fetchTasks(): Promise<Task[]> {
-    return apiSimulation.tasks.getAll();
+export const listingService = {
+  // Fetch all listings
+  async fetchListings(): Promise<Listing[]> {
+    return apiSimulation.listings.getAll();
   },
 
-  // Fetch task by ID
-  async fetchTaskById(taskId: string): Promise<Task> {
-    return apiSimulation.tasks.getById(taskId);
+  // Fetch listing by ID
+  async fetchListingById(listingId: string): Promise<Listing> {
+    return apiSimulation.listings.getById(listingId);
   },
 
-  // Create a new task
-  async createTask(taskData: Omit<Task, "id">): Promise<Task> {
-    return apiSimulation.tasks.create(taskData);
+  // Create a new listing
+  async createListing(listingData: Omit<Listing, "id">): Promise<Listing> {
+    return apiSimulation.listings.create(listingData);
   },
 
-  // Update a task
-  async updateTask(taskId: string, taskData: Partial<Task>): Promise<Task> {
-    return apiSimulation.tasks.update(taskId, taskData);
+  // Update a listing
+  async updateListing(
+    listingId: string,
+    listingData: Partial<Listing>
+  ): Promise<Listing> {
+    return apiSimulation.listings.update(listingId, listingData);
   },
 
-  // Delete a task
-  async deleteTask(taskId: string): Promise<void> {
-    return apiSimulation.tasks.delete(taskId);
+  // Delete a listing
+  async deleteListing(listingId: string): Promise<void> {
+    return apiSimulation.listings.delete(listingId);
   },
 
   // Reset the database (useful for testing)
   async resetData(): Promise<void> {
-    return apiSimulation.tasks.reset();
+    return apiSimulation.listings.reset();
   },
 };

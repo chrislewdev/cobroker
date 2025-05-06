@@ -1,10 +1,10 @@
-// components/tasks/FilterPanel.tsx
+// components/listing_filter/FilterPanel.tsx
 
 // filter panel, used in filter related components
 
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import useTaskStore, { TaskFilters } from "@/stores/taskStore";
+import useListingStore, { ListingFilters } from "@/stores/listingStore";
 
 interface FilterPanelProps {
   isOpen: boolean;
@@ -17,10 +17,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   onClose,
   resetPage,
 }) => {
-  const { filters, setFilter, applyFilters, clearFilters } = useTaskStore();
+  const { filters, setFilter, applyFilters, clearFilters } = useListingStore();
 
   // Local state for filters (before applying)
-  const [localFilters, setLocalFilters] = useState<TaskFilters>(filters);
+  const [localFilters, setLocalFilters] = useState<ListingFilters>(filters);
 
   // Update local filters when store filters change
   useEffect(() => {
@@ -111,7 +111,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   const handleApplyFilters = () => {
     // Apply local filters to the store
     for (const [key, value] of Object.entries(localFilters)) {
-      setFilter(key as keyof TaskFilters, value);
+      setFilter(key as keyof ListingFilters, value);
     }
 
     // Apply filters
@@ -212,7 +212,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           <div className="px-4 pt-8 pb-4 sm:p-8 sm:pb-6">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
-                Filter Tasks
+                Filter Listings
               </h3>
               <button
                 onClick={handleCancelFilters}

@@ -1,7 +1,7 @@
-// stores/taskStore.ts
+// stores/listingStore.ts
 
 import { create } from "zustand";
-import { taskService } from "@/services/listingService";
+import { listingService } from "@/services/listingService";
 import {
   AsyncState,
   initialAsyncState,
@@ -16,18 +16,18 @@ import {
 } from "@/utils/stateResetUtils";
 
 // Owner type
-export interface TaskOwner {
+export interface ListingOwner {
   id: string;
   name: string;
   profilePic: string;
 }
 
-// Task type
-export interface Task {
+// Listing type
+export interface Listing {
   id: string;
   title: string;
   description: string;
-  owner: TaskOwner;
+  owner: ListingOwner;
   topic: string;
   subject: string;
   dateCreated: string;
@@ -36,8 +36,8 @@ export interface Task {
   status: "to do" | "in progress" | "completed" | "pending review";
 }
 
-// Sort options for tasks
-export type TaskSortOption =
+// Sort options for listings
+export type ListingSortOption =
   | "deadline-asc"
   | "deadline-desc"
   | "budget-asc"
@@ -46,7 +46,7 @@ export type TaskSortOption =
   | "date-created-desc";
 
 // Filter options
-export interface TaskFilters {
+export interface ListingFilters {
   priority: ("high" | "medium" | "low")[];
   topics: string[];
   subjects: string[];
@@ -56,53 +56,56 @@ export interface TaskFilters {
   };
 }
 
-// Define task store state
-interface TaskState {
-  // Task data
-  tasks: Task[];
-  filteredTasks: Task[];
-  currentTask: Task | null;
+// Define listing store state
+interface ListingState {
+  // Listing data
+  listings: Listing[];
+  filteredListings: Listing[];
+  currentListing: Listing | null;
 
   // UI state
-  sortBy: TaskSortOption;
-  filters: TaskFilters;
+  sortBy: ListingSortOption;
+  filters: ListingFilters;
   activeFilterCount: number;
 
   // Async states
-  taskListState: AsyncState<Task[]>;
-  taskDetailState: AsyncState<Task>;
-  taskMutationState: AsyncState<Task | void>;
+  listingListState: AsyncState<Listing[]>;
+  listingDetailState: AsyncState<Listing>;
+  listingMutationState: AsyncState<Listing | void>;
 
-  // Task actions
-  fetchTasks: () => Promise<Task[] | null>;
-  fetchTaskById: (taskId: string) => Promise<Task | null>;
-  createTask: (taskData: Omit<Task, "id">) => Promise<Task | null>;
-  updateTask: (taskId: string, taskData: Partial<Task>) => Promise<Task | null>;
-  deleteTask: (taskId: string) => Promise<void | null>;
+  // Listing actions
+  fetchListings: () => Promise<Listing[] | null>;
+  fetchListingById: (listingId: string) => Promise<Listing | null>;
+  createListing: (listingData: Omit<Listing, "id">) => Promise<Listing | null>;
+  updateListing: (
+    listingId: string,
+    listingData: Partial<Listing>
+  ) => Promise<Listing | null>;
+  deleteListing: (listingId: string) => Promise<void | null>;
 
   // Filter actions
-  setFilter: <K extends keyof TaskFilters>(
+  setFilter: <K extends keyof ListingFilters>(
     filterType: K,
-    value: TaskFilters[K]
+    value: ListingFilters[K]
   ) => void;
   clearFilters: () => void;
-  clearFilter: <K extends keyof TaskFilters>(filterType: K) => void;
+  clearFilter: <K extends keyof ListingFilters>(filterType: K) => void;
   applyFilters: () => void;
 
   // Sort actions
-  setSortOption: (option: TaskSortOption) => void;
+  setSortOption: (option: ListingSortOption) => void;
 
   // State management
   resetState: {
-    taskList: (options?: ResetOptions) => void;
-    taskDetail: (options?: ResetOptions) => void;
-    taskMutation: (options?: ResetOptions) => void;
+    listingList: (options?: ResetOptions) => void;
+    listingDetail: (options?: ResetOptions) => void;
+    listingMutation: (options?: ResetOptions) => void;
     all: (options?: ResetOptions) => void;
   };
 }
 
 // Default empty filters
-const defaultFilters: TaskFilters = {
+const defaultFilters: ListingFilters = {
   priority: [],
   topics: [],
   subjects: [],
@@ -114,49 +117,52 @@ const defaultFilters: TaskFilters = {
 
 // AsyncState mapping for reset functions
 const asyncStateMap = {
-  taskListState: initialAsyncState,
-  taskDetailState: initialAsyncState,
-  taskMutationState: initialAsyncState,
+  listingListState: initialAsyncState,
+  listingDetailState: initialAsyncState,
+  listingMutationState: initialAsyncState,
 };
 
-// Helper function to sort tasks based on sort option
-function sortTasks(tasks: Task[], sortOption: TaskSortOption): Task[] {
-  const sortedTasks = [...tasks]; // Create a copy to avoid mutating the original
+// Helper function to sort listings based on sort option
+function sortListings(
+  listings: Listing[],
+  sortOption: ListingSortOption
+): Listing[] {
+  const sortedListings = [...listings]; // Create a copy to avoid mutating the original
 
   switch (sortOption) {
     case "deadline-asc":
-      return sortedTasks.sort(
+      return sortedListings.sort(
         (a, b) =>
           new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
       );
 
     case "deadline-desc":
-      return sortedTasks.sort(
+      return sortedListings.sort(
         (a, b) =>
           new Date(b.deadline).getTime() - new Date(a.deadline).getTime()
       );
 
     case "budget-asc":
-      return sortedTasks.sort((a, b) => a.budget - b.budget);
+      return sortedListings.sort((a, b) => a.budget - b.budget);
 
     case "budget-desc":
-      return sortedTasks.sort((a, b) => b.budget - a.budget);
+      return sortedListings.sort((a, b) => b.budget - a.budget);
 
     case "date-created-asc":
-      return sortedTasks.sort(
+      return sortedListings.sort(
         (a, b) =>
           new Date(a.dateCreated).getTime() - new Date(b.dateCreated).getTime()
       );
 
     case "date-created-desc":
-      return sortedTasks.sort(
+      return sortedListings.sort(
         (a, b) =>
           new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
       );
 
     default:
       // Default to deadline ascending (earliest first)
-      return sortedTasks.sort(
+      return sortedListings.sort(
         (a, b) =>
           new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
       );
@@ -164,7 +170,7 @@ function sortTasks(tasks: Task[], sortOption: TaskSortOption): Task[] {
 }
 
 // Calculate priority based on deadline
-function calculateTaskPriority(deadline: string): "high" | "medium" | "low" {
+function calculateListingPriority(deadline: string): "high" | "medium" | "low" {
   const deadlineDate = new Date(deadline);
   const currentDate = new Date();
 
@@ -182,52 +188,57 @@ function calculateTaskPriority(deadline: string): "high" | "medium" | "low" {
   }
 }
 
-// Check if a task matches the budget range filter
+// Check if a listing matches the budget range filter
 function matchesBudgetRange(
-  task: Task,
-  budgetRange: TaskFilters["budgetRange"]
+  listing: Listing,
+  budgetRange: ListingFilters["budgetRange"]
 ): boolean {
   const { min, max } = budgetRange;
 
-  if (min !== null && task.budget < min) {
+  if (min !== null && listing.budget < min) {
     return false;
   }
 
-  if (max !== null && task.budget > max) {
+  if (max !== null && listing.budget > max) {
     return false;
   }
 
   return true;
 }
 
-// Apply all filters to the tasks
-function applyFiltersToTasks(tasks: Task[], filters: TaskFilters): Task[] {
-  return tasks.filter((task) => {
-    // Calculate task priority
-    const taskPriority = calculateTaskPriority(task.deadline);
+// Apply all filters to the listings
+function applyFiltersToListings(
+  listings: Listing[],
+  filters: ListingFilters
+): Listing[] {
+  return listings.filter((listing) => {
+    // Calculate listing priority
+    const listingPriority = calculateListingPriority(listing.deadline);
 
-    // Check if task matches priority filter
+    // Check if listing matches priority filter
     const matchesPriority =
-      filters.priority.length === 0 || filters.priority.includes(taskPriority);
+      filters.priority.length === 0 ||
+      filters.priority.includes(listingPriority);
 
-    // Check if task matches topic filter
+    // Check if listing matches topic filter
     const matchesTopic =
-      filters.topics.length === 0 || filters.topics.includes(task.topic);
+      filters.topics.length === 0 || filters.topics.includes(listing.topic);
 
-    // Check if task matches subject filter
+    // Check if listing matches subject filter
     const matchesSubject =
-      filters.subjects.length === 0 || filters.subjects.includes(task.subject);
+      filters.subjects.length === 0 ||
+      filters.subjects.includes(listing.subject);
 
-    // Check if task matches budget range filter
-    const matchesBudget = matchesBudgetRange(task, filters.budgetRange);
+    // Check if listing matches budget range filter
+    const matchesBudget = matchesBudgetRange(listing, filters.budgetRange);
 
-    // Task must match all active filters
+    // Listing must match all active filters
     return matchesPriority && matchesTopic && matchesSubject && matchesBudget;
   });
 }
 
 // Calculate the number of active filters
-function calculateActiveFilterCount(filters: TaskFilters): number {
+function calculateActiveFilterCount(filters: ListingFilters): number {
   let count = 0;
 
   if (filters.priority.length > 0) count++;
@@ -241,168 +252,198 @@ function calculateActiveFilterCount(filters: TaskFilters): number {
   return count;
 }
 
-// Create task store
-const useTaskStore = create<TaskState>()((set, get) => {
+// Create listing store
+const useListingStore = create<ListingState>()((set, get) => {
   // Initialize the store
   const store = {
-    // Task data
-    tasks: [],
-    filteredTasks: [],
-    currentTask: null,
+    // Listing data
+    listings: [],
+    filteredListings: [],
+    currentListing: null,
 
     // UI state
-    sortBy: "deadline-asc" as TaskSortOption, // Default sort by deadline ascending (earliest first)
+    sortBy: "deadline-asc" as ListingSortOption, // Default sort by deadline ascending (earliest first)
     filters: defaultFilters,
     activeFilterCount: 0,
 
     // Async states
-    taskListState: initialAsyncState,
-    taskDetailState: initialAsyncState,
-    taskMutationState: initialAsyncState,
+    listingListState: initialAsyncState,
+    listingDetailState: initialAsyncState,
+    listingMutationState: initialAsyncState,
 
-    // Task actions
-    fetchTasks: async () => {
+    // Listing actions
+    fetchListings: async () => {
       try {
-        set({ taskListState: loadingState(get().taskListState) });
+        set({ listingListState: loadingState(get().listingListState) });
 
-        const tasks = await taskService.fetchTasks();
+        const listings = await listingService.fetchListings();
 
-        // Sort the tasks based on current sort option
-        const sortedTasks = sortTasks(tasks, get().sortBy);
+        // Sort the listings based on current sort option
+        const sortedListings = sortListings(listings, get().sortBy);
 
         // Apply existing filters if any
-        const filteredTasks = applyFiltersToTasks(sortedTasks, get().filters);
-
-        set({
-          taskListState: successState(tasks),
-          tasks: sortedTasks,
-          filteredTasks,
-        });
-
-        return tasks;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        set({ taskListState: errorState(errorMessage, get().taskListState) });
-        return null;
-      }
-    },
-
-    fetchTaskById: async (taskId: string) => {
-      try {
-        set({ taskDetailState: loadingState(get().taskDetailState) });
-
-        const task = await taskService.fetchTaskById(taskId);
-
-        set({
-          taskDetailState: successState(task),
-          currentTask: task,
-        });
-
-        return task;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        set({
-          taskDetailState: errorState(errorMessage, get().taskDetailState),
-        });
-        return null;
-      }
-    },
-
-    createTask: async (taskData: Omit<Task, "id">) => {
-      try {
-        set({ taskMutationState: loadingState(get().taskMutationState) });
-
-        const newTask = await taskService.createTask(taskData);
-
-        // Get the current tasks and sort option
-        const tasks = [...get().tasks, newTask];
-        const sortBy = get().sortBy;
-
-        // Sort tasks with the new task included
-        const sortedTasks = sortTasks(tasks, sortBy);
-
-        // Apply existing filters to the new set of tasks
-        const filteredTasks = applyFiltersToTasks(sortedTasks, get().filters);
-
-        set({
-          taskMutationState: successState(newTask),
-          tasks: sortedTasks,
-          filteredTasks,
-        });
-
-        return newTask;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        set({
-          taskMutationState: errorState(errorMessage, get().taskMutationState),
-        });
-        return null;
-      }
-    },
-
-    updateTask: async (taskId: string, taskData: Partial<Task>) => {
-      try {
-        set({ taskMutationState: loadingState(get().taskMutationState) });
-
-        const updatedTask = await taskService.updateTask(taskId, taskData);
-
-        // Update tasks list with the updated task
-        const tasks = get().tasks.map((task) =>
-          task.id === taskId ? updatedTask : task
+        const filteredListings = applyFiltersToListings(
+          sortedListings,
+          get().filters
         );
 
-        // Sort tasks with the updated task
-        const sortedTasks = sortTasks(tasks, get().sortBy);
-
-        // Apply existing filters to the new set of tasks
-        const filteredTasks = applyFiltersToTasks(sortedTasks, get().filters);
-
-        // Update current task if it's the one being updated
-        const currentTask =
-          get().currentTask?.id === taskId ? updatedTask : get().currentTask;
-
         set({
-          taskMutationState: successState(updatedTask),
-          tasks: sortedTasks,
-          filteredTasks,
-          currentTask,
+          listingListState: successState(listings),
+          listings: sortedListings,
+          filteredListings,
         });
 
-        return updatedTask;
+        return listings;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         set({
-          taskMutationState: errorState(errorMessage, get().taskMutationState),
+          listingListState: errorState(errorMessage, get().listingListState),
         });
         return null;
       }
     },
 
-    deleteTask: async (taskId: string) => {
+    fetchListingById: async (listingId: string) => {
       try {
-        set({ taskMutationState: loadingState(get().taskMutationState) });
+        set({ listingDetailState: loadingState(get().listingDetailState) });
 
-        await taskService.deleteTask(taskId);
-
-        // Remove the task from the tasks list
-        const tasks = get().tasks.filter((task) => task.id !== taskId);
-
-        // Apply existing filters to the new set of tasks
-        const filteredTasks = applyFiltersToTasks(tasks, get().filters);
-
-        // Clear current task if it's the one being deleted
-        const currentTask =
-          get().currentTask?.id === taskId ? null : get().currentTask;
+        const listing = await listingService.fetchListingById(listingId);
 
         set({
-          taskMutationState: successState(undefined),
-          tasks,
-          filteredTasks,
-          currentTask,
+          listingDetailState: successState(listing),
+          currentListing: listing,
+        });
+
+        return listing;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        set({
+          listingDetailState: errorState(
+            errorMessage,
+            get().listingDetailState
+          ),
+        });
+        return null;
+      }
+    },
+
+    createListing: async (listingData: Omit<Listing, "id">) => {
+      try {
+        set({ listingMutationState: loadingState(get().listingMutationState) });
+
+        const newListing = await listingService.createListing(listingData);
+
+        // Get the current listings and sort option
+        const listings = [...get().listings, newListing];
+        const sortBy = get().sortBy;
+
+        // Sort listings with the new listing included
+        const sortedListings = sortListings(listings, sortBy);
+
+        // Apply existing filters to the new set of listings
+        const filteredListings = applyFiltersToListings(
+          sortedListings,
+          get().filters
+        );
+
+        set({
+          listingMutationState: successState(newListing),
+          listings: sortedListings,
+          filteredListings,
+        });
+
+        return newListing;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        set({
+          listingMutationState: errorState(
+            errorMessage,
+            get().listingMutationState
+          ),
+        });
+        return null;
+      }
+    },
+
+    updateListing: async (listingId: string, listingData: Partial<Listing>) => {
+      try {
+        set({ listingMutationState: loadingState(get().listingMutationState) });
+
+        const updatedListing = await listingService.updateListing(
+          listingId,
+          listingData
+        );
+
+        // Update listings list with the updated listing
+        const listings = get().listings.map((listing) =>
+          listing.id === listingId ? updatedListing : listing
+        );
+
+        // Sort listings with the updated listing
+        const sortedListings = sortListings(listings, get().sortBy);
+
+        // Apply existing filters to the new set of listings
+        const filteredListings = applyFiltersToListings(
+          sortedListings,
+          get().filters
+        );
+
+        // Update current listing if it's the one being updated
+        const currentListing =
+          get().currentListing?.id === listingId
+            ? updatedListing
+            : get().currentListing;
+
+        set({
+          listingMutationState: successState(updatedListing),
+          listings: sortedListings,
+          filteredListings,
+          currentListing,
+        });
+
+        return updatedListing;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        set({
+          listingMutationState: errorState(
+            errorMessage,
+            get().listingMutationState
+          ),
+        });
+        return null;
+      }
+    },
+
+    deleteListing: async (listingId: string) => {
+      try {
+        set({ listingMutationState: loadingState(get().listingMutationState) });
+
+        await listingService.deleteListing(listingId);
+
+        // Remove the listing from the listings list
+        const listings = get().listings.filter(
+          (listing) => listing.id !== listingId
+        );
+
+        // Apply existing filters to the new set of listings
+        const filteredListings = applyFiltersToListings(
+          listings,
+          get().filters
+        );
+
+        // Clear current listing if it's the one being deleted
+        const currentListing =
+          get().currentListing?.id === listingId ? null : get().currentListing;
+
+        set({
+          listingMutationState: successState(undefined),
+          listings,
+          filteredListings,
+          currentListing,
         });
 
         return undefined;
@@ -410,16 +451,19 @@ const useTaskStore = create<TaskState>()((set, get) => {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         set({
-          taskMutationState: errorState(errorMessage, get().taskMutationState),
+          listingMutationState: errorState(
+            errorMessage,
+            get().listingMutationState
+          ),
         });
         return null;
       }
     },
 
     // Set a specific filter
-    setFilter: <K extends keyof TaskFilters>(
+    setFilter: <K extends keyof ListingFilters>(
       filterType: K,
-      value: TaskFilters[K]
+      value: ListingFilters[K]
     ) => {
       const newFilters = {
         ...get().filters,
@@ -433,57 +477,66 @@ const useTaskStore = create<TaskState>()((set, get) => {
     clearFilters: () => {
       set({
         filters: defaultFilters,
-        filteredTasks: get().tasks,
+        filteredListings: get().listings,
         activeFilterCount: 0,
       });
     },
 
     // Clear a specific filter
-    clearFilter: <K extends keyof TaskFilters>(filterType: K) => {
+    clearFilter: <K extends keyof ListingFilters>(filterType: K) => {
       const newFilters = {
         ...get().filters,
         [filterType]: defaultFilters[filterType],
       };
 
       // Apply the updated filters
-      const filteredTasks = applyFiltersToTasks(get().tasks, newFilters);
+      const filteredListings = applyFiltersToListings(
+        get().listings,
+        newFilters
+      );
 
       // Calculate active filter count
       const activeFilterCount = calculateActiveFilterCount(newFilters);
 
       set({
         filters: newFilters,
-        filteredTasks,
+        filteredListings,
         activeFilterCount,
       });
     },
 
-    // Apply all current filters to the tasks
+    // Apply all current filters to the listings
     applyFilters: () => {
-      const filteredTasks = applyFiltersToTasks(get().tasks, get().filters);
+      const filteredListings = applyFiltersToListings(
+        get().listings,
+        get().filters
+      );
       const activeFilterCount = calculateActiveFilterCount(get().filters);
 
       set({
-        filteredTasks,
+        filteredListings,
         activeFilterCount,
       });
     },
 
-    setSortOption: (option: TaskSortOption) => {
-      // Get current tasks
-      const tasks = [...get().tasks];
+    setSortOption: (option: ListingSortOption) => {
+      // Get current listings
+      const listings = [...get().listings];
 
-      // Sort tasks based on new option
-      const sortedTasks = sortTasks(tasks, option);
+      // Sort listings based on new option
+      const sortedListings = sortListings(listings, option);
 
-      // Apply existing filters to the sorted tasks
-      const filteredTasks = applyFiltersToTasks(sortedTasks, get().filters);
+      // Apply existing filters to the sorted listings
+      const filteredListings = applyFiltersToListings(
+        sortedListings,
+        get().filters
+      );
 
-      // Update state with new sort option and sorted tasks
+      // Update state with new sort option and sorted listings
       set({
         sortBy: option,
-        tasks: sortedTasks,
-        filteredTasks,
+        listings: sortedListings,
+        filteredListings,
       });
     },
 
@@ -493,21 +546,21 @@ const useTaskStore = create<TaskState>()((set, get) => {
 
   // Generate reset functions using factory but with only the needed parts of StoreApi
   const storeApi = { setState: set, getState: get };
-  const resetFunctions = createStoreResetFunctions<TaskState>(storeApi, {
-    taskListState: initialAsyncState,
-    taskDetailState: initialAsyncState,
-    taskMutationState: initialAsyncState,
+  const resetFunctions = createStoreResetFunctions<ListingState>(storeApi, {
+    listingListState: initialAsyncState,
+    listingDetailState: initialAsyncState,
+    listingMutationState: initialAsyncState,
   });
 
   // Map the generated reset functions to our preferred naming
   store.resetState = {
-    taskList: resetFunctions.taskListState,
-    taskDetail: resetFunctions.taskDetailState,
-    taskMutation: resetFunctions.taskMutationState,
+    listingList: resetFunctions.listingListState,
+    listingDetail: resetFunctions.listingDetailState,
+    listingMutation: resetFunctions.listingMutationState,
     all: resetFunctions.all,
   };
 
   return store;
 });
 
-export default useTaskStore;
+export default useListingStore;
