@@ -9,13 +9,14 @@ export const metadata = {
 };
 
 interface PropertyDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function PropertyDetailPage({
+export default async function PropertyDetailPage({
   params,
 }: PropertyDetailPageProps) {
-  return <PropertyDetailClient propertyId={params.id} />;
+  const { id } = await params;
+  return <PropertyDetailClient propertyId={id} />;
 }

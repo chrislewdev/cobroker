@@ -7,6 +7,7 @@ import FormButton from "@/components/ui_blocks/FormButton";
 import FormActions from "@/components/ui_blocks/FormActions";
 import FormStatus from "@/components/ui_blocks/FormStatus";
 import { useForm } from "@/hooks/useForm";
+import { User } from "@/stores/authStore";
 
 interface EditPersonalInfoProps {
   profileData: {
@@ -17,7 +18,7 @@ interface EditPersonalInfoProps {
     bio: string;
   };
   onCancel: () => void;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: Partial<User>) => Promise<void>;
   isLoading?: boolean;
   isError?: boolean;
   errorMessage?: string;

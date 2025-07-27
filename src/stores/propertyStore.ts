@@ -11,7 +11,6 @@ import {
 } from "@/utils/asyncState";
 import {
   createStoreResetFunctions,
-  createResetFunction,
   ResetOptions,
 } from "@/utils/stateResetUtils";
 
@@ -139,13 +138,6 @@ const defaultFilters: PropertyFilters = {
     min: null,
     max: null,
   },
-};
-
-// AsyncState mapping for reset functions
-const asyncStateMap = {
-  propertyListState: initialAsyncState,
-  propertyDetailState: initialAsyncState,
-  propertyMutationState: initialAsyncState,
 };
 
 // Helper function to sort properties based on sort option
@@ -632,7 +624,7 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
     },
 
     // State management
-    resetState: {} as any,
+    resetState: {} as PropertyState["resetState"],
   };
 
   // Generate reset functions using factory but with only the needed parts of StoreApi

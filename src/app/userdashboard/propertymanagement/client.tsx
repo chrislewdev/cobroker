@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import usePropertyStore from "@/stores/propertyStore";
+import usePropertyStore, { PropertySortOption } from "@/stores/propertyStore";
 import { useSearchParams } from "next/navigation";
 import { useResetOnUnmount } from "@/hooks/useStateReset";
 import PropertyListingPage from "@/components/propertylist/PropertyListingPage";
@@ -22,7 +22,7 @@ export default function PropertyManagementClient() {
 
     const sortParam = searchParams.get("sort");
     if (sortParam) {
-      setSortOption(sortParam as any);
+      setSortOption(sortParam as PropertySortOption);
     }
   }, [searchParams, setSortOption, resetState]);
 

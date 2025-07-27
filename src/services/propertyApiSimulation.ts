@@ -7,7 +7,18 @@ import { PropertyListing } from "@/stores/propertyStore";
 
 // Simulate creating and fetching property without backend and db
 // Use a persistent in-memory database that survives page reloads and navigation by storing it in the global window object (only in browser environment)
-const getDatabase = (): { properties: PropertyListing[]; nextId: number } => {
+interface DatabaseSchema {
+  properties: PropertyListing[];
+  nextId: number;
+}
+
+declare global {
+  interface Window {
+    __PROPERTY_API_SIMULATION?: DatabaseSchema;
+  }
+}
+
+const getDatabase = (): DatabaseSchema => {
   // Only run in browser environment
   if (typeof window === "undefined") {
     return {
@@ -17,14 +28,14 @@ const getDatabase = (): { properties: PropertyListing[]; nextId: number } => {
   }
 
   // Initialize global storage if it doesn't exist
-  if (!(window as any).__PROPERTY_API_SIMULATION) {
-    (window as any).__PROPERTY_API_SIMULATION = {
+  if (!window.__PROPERTY_API_SIMULATION) {
+    window.__PROPERTY_API_SIMULATION = {
       properties: getInitialData(),
       nextId: calculateNextId(getInitialData()),
     };
   }
 
-  return (window as any).__PROPERTY_API_SIMULATION;
+  return window.__PROPERTY_API_SIMULATION!;
 };
 
 // Create a function to get a deep clone of the data to avoid references
@@ -148,7 +159,7 @@ export const propertyApiSimulation = {
     // Reset the database to initial state (useful for testing)
     async reset(): Promise<void> {
       if (typeof window !== "undefined") {
-        (window as any).__PROPERTY_API_SIMULATION = {
+        window.__PROPERTY_API_SIMULATION = {
           properties: getInitialData(),
           nextId: calculateNextId(getInitialData()),
         };

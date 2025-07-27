@@ -38,7 +38,7 @@ export default function UserDashboardLayout({
   const [isMobile, setIsMobile] = useState(false);
 
   // Authentication state and router
-  const { isAuthenticated, user, authState, resetState } = useAuthStore();
+  const { isAuthenticated, authState, resetState } = useAuthStore();
   const { loading, error } = authState;
   const router = useRouter();
 

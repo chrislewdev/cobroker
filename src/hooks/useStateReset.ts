@@ -45,7 +45,7 @@ export function useStateReset(configs: ResetConfig[]) {
     reset: (key?: string) => {
       if (key) {
         // Reset specific config by key
-        const config = configs.find((c) => (c as any).key === key);
+        const config = configs.find((c) => c.key === key);
         if (config) {
           config.resetFn({ preserve: config.preserveData });
         }

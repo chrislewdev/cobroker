@@ -11,6 +11,7 @@ import useAuthStore from "@/stores/authStore";
 import useProfileStore from "@/stores/profileStore";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { useResetOnUnmount } from "@/hooks/useStateReset";
+import Image from "next/image";
 
 // Define a consistent header height
 export const HEADER_HEIGHT = "84px";
@@ -105,9 +106,11 @@ export const UserDashboardHeader: React.FC<UserDashboardHeaderProps> = ({
           <Link href="/" className="-m-1.5 p-1.5 block">
             <span className="sr-only">Asia Influencer X</span>
             <div className="bg-blue-600 dark:bg-blue-700 rounded-full flex items-center justify-center p-3">
-              <img
-                alt=""
+              <Image
+                alt="Asia Influencer X Logo"
                 src="https://asiainfluencerx.com/wp-content/uploads/2022/10/Logo_AIX-White.png"
+                width={32}
+                height={32}
                 className="h-8 w-auto"
               />
             </div>
@@ -126,9 +129,11 @@ export const UserDashboardHeader: React.FC<UserDashboardHeaderProps> = ({
                   {displayUser.firstName} {displayUser.lastName}
                 </span>
                 {displayUser.profilePic ? (
-                  <img
+                  <Image
                     src={displayUser.profilePic}
                     alt="Profile"
+                    width={32}
+                    height={32}
                     className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-600"
                   />
                 ) : (
@@ -169,9 +174,11 @@ export const UserDashboardHeader: React.FC<UserDashboardHeaderProps> = ({
           >
             <span className="sr-only">Open user menu</span>
             {displayUser?.profilePic ? (
-              <img
+              <Image
                 src={displayUser.profilePic}
                 alt="Profile"
+                width={32}
+                height={32}
                 className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-600"
               />
             ) : (

@@ -11,26 +11,30 @@ export interface ResetOptions {
 }
 
 // Type for the path to a state property
-export type StatePath<T> = string[] | ((state: T) => any);
+export type StatePath<T> = string[] | ((state: T) => unknown);
 
 // Create a type-safe reset function for a specific state slice
+interface StateWithData {
+  data?: unknown;
+}
+
 export function createResetFunction<T>(
-  getter: (state: T) => any,
+  getter: (state: T) => StateWithData | unknown,
   setter: StoreApi<T>["setState"],
-  initialValue: any,
+  initialValue: StateWithData | unknown,
   stateKey?: string
 ) {
   return (options: ResetOptions = {}) => {
     setter((state) => {
       // Use functional updates to get the current state
-      const currentState = getter(state);
+      const currentState = getter(state) as StateWithData;
 
       // Preserve data if specified
       const data =
         options.preserve && currentState?.data ? currentState.data : null;
 
       // Use provided stateKey or try to determine it
-      const key = stateKey || getLastKey(getter);
+      const key = stateKey || getLastKey(() => getter(state as T));
 
       // If we couldn't determine the key, just return the state unchanged to avoid errors
       if (!key) return state;
@@ -45,7 +49,7 @@ export function createResetFunction<T>(
 }
 
 // Reset multiple state properties at once
-export function createBatchResetFunction<T>(setters: {
+export function createBatchResetFunction(setters: {
   [key: string]: (options?: ResetOptions) => void;
 }) {
   return (options: ResetOptions = {}) => {
@@ -56,7 +60,7 @@ export function createBatchResetFunction<T>(setters: {
 
 // Helper function to get the last key from a function path
 // This is a best-effort approach and may not work for all cases
-function getLastKey<T>(getter: (state: T) => any): string | null {
+function getLastKey(getter: () => unknown): string | null {
   try {
     // Convert function to string
     const fnString = getter.toString();
@@ -93,7 +97,7 @@ interface SimplifiedStoreApi<T> {
 // Factory function to generate reset functions for a store
 export function createStoreResetFunctions<T>(
   store: SimplifiedStoreApi<T>,
-  asyncStateMap: Record<string, any>
+  asyncStateMap: Record<string, unknown>
 ) {
   const resetFunctions: Record<string, (options?: ResetOptions) => void> = {};
 

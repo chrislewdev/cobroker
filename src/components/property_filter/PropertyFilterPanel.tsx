@@ -17,7 +17,7 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
   onClose,
   resetPage,
 }) => {
-  const { filters, setFilter, applyFilters, clearFilters } = usePropertyStore();
+  const { filters, setFilter, applyFilters } = usePropertyStore();
 
   // Local state for filters (before applying)
   const [localFilters, setLocalFilters] = useState<PropertyFilters>(filters);

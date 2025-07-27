@@ -147,7 +147,7 @@ const useProfileStore = create<ProfileState>()(
         },
 
         // State management
-        resetState: {} as any,
+        resetState: {} as ProfileState["resetState"],
       };
 
       // Generate reset functions using factory but with only the needed parts of StoreApi

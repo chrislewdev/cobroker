@@ -16,6 +16,12 @@ import EditAddress from "@/components/userprofile/EditAddress";
 import useAuthStore from "@/stores/authStore";
 import useProfileStore from "@/stores/profileStore";
 import { useResetOnUnmount } from "@/hooks/useStateReset";
+import { User } from "@/stores/authStore";
+
+interface ProfilePendingUpdate {
+  section: "personal" | "address";
+  data: Partial<User>;
+}
 
 function EditIcon(props: React.ComponentPropsWithoutRef<"svg">) {
   return (
@@ -51,7 +57,8 @@ export default function DashboardClientPage() {
   const [editingAddress, setEditingAddress] = useState(false);
 
   // State used during saving process to prevent UI flashes
-  const [pendingUpdates, setPendingUpdates] = useState<any>(null);
+  const [pendingUpdates, setPendingUpdates] =
+    useState<ProfilePendingUpdate | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   // Reset profile state on component unmount
@@ -85,7 +92,10 @@ export default function DashboardClientPage() {
   }, [profileSuccess, isSaving, resetState]);
 
   // Unified handler for profile updates
-  const handleProfileUpdate = async (section: string, data: any) => {
+  const handleProfileUpdate = async (
+    section: "personal" | "address",
+    data: Partial<User>
+  ) => {
     try {
       // Set saving state to true to track the process of saving
       setIsSaving(true);
@@ -107,12 +117,12 @@ export default function DashboardClientPage() {
   };
 
   // Handle personal info update with the unified handler
-  const handlePersonalInfoUpdate = async (data: any) => {
+  const handlePersonalInfoUpdate = async (data: Partial<User>) => {
     await handleProfileUpdate("personal", data);
   };
 
   // Handle address update with the unified handler
-  const handleAddressUpdate = async (data: any) => {
+  const handleAddressUpdate = async (data: Partial<User>) => {
     await handleProfileUpdate("address", data);
   };
 

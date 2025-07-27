@@ -21,7 +21,7 @@ interface LoginFormValues {
 const LoginForm: React.FC = () => {
   const router = useRouter();
   const { login, isAuthenticated, authState, resetState } = useAuthStore();
-  const { loading, error, success } = authState;
+  const { loading, error } = authState;
 
   // Reset auth state on component unmount
   useResetOnUnmount(resetState.auth);
@@ -99,7 +99,7 @@ const LoginForm: React.FC = () => {
   // Create footer content
   const footerContent = (
     <p className="text-sm text-gray-600 dark:text-gray-400">
-      Don't have an account?{" "}
+      Don&apos;t have an account?{" "}
       <Link href="/signup" className="text-black dark:text-white font-medium">
         Get access →
       </Link>

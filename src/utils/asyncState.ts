@@ -2,7 +2,7 @@
 
 // Manage asynchronous state, standardize loading, error, and success states across the application
 
-export interface AsyncState<T = any> {
+export interface AsyncState<T = unknown> {
   data: T | null;
   loading: boolean;
   error: string | null;

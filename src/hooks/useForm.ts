@@ -4,7 +4,10 @@
 
 import { useState, useCallback, ChangeEvent } from "react";
 
-export type FieldValues = Record<string, any>;
+export type FieldValues = Record<
+  string,
+  string | number | boolean | Date | null | undefined
+>;
 export type FieldErrors<T extends FieldValues = FieldValues> = Partial<
   Record<keyof T, string>
 >;
@@ -42,7 +45,7 @@ interface UseFormReturn<T extends FieldValues = FieldValues> {
   handleChange: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => void;
-  setFieldValue: (name: keyof T, value: any) => void;
+  setFieldValue: (name: keyof T, value: T[keyof T]) => void;
   handleBlur: (name: keyof T) => void;
   handleSubmit: (e: React.FormEvent) => void;
   reset: () => void;
@@ -60,7 +63,7 @@ export function useForm<T extends FieldValues = FieldValues>({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateField = useCallback(
-    (name: keyof T, value: any): string | undefined => {
+    (name: keyof T, value: T[keyof T]): string | undefined => {
       const rules = validationRules[name];
       if (!rules) return undefined;
 
@@ -78,7 +81,7 @@ export function useForm<T extends FieldValues = FieldValues>({
       // Pattern validation
       if (rules.pattern && value) {
         const { value: pattern, message } = rules.pattern;
-        if (!pattern.test(value)) {
+        if (typeof value === "string" && !pattern.test(value)) {
           return message;
         }
       }
@@ -101,7 +104,7 @@ export function useForm<T extends FieldValues = FieldValues>({
 
       // Custom validation
       if (rules.validate) {
-        const result = rules.validate(value, values);
+        const result = rules.validate(value as T[keyof T], values);
         if (result !== true) {
           return result;
         }
@@ -134,11 +137,13 @@ export function useForm<T extends FieldValues = FieldValues>({
       const fieldName = name as keyof T;
 
       // Handle different input types
-      let fieldValue: any = value;
+      let fieldValue: T[keyof T];
       if ((e.target as HTMLInputElement).type === "checkbox") {
-        fieldValue = (e.target as HTMLInputElement).checked;
+        fieldValue = (e.target as HTMLInputElement).checked as T[keyof T];
       } else if (type === "number") {
-        fieldValue = value === "" ? "" : Number(value);
+        fieldValue = (value === "" ? "" : Number(value)) as T[keyof T];
+      } else {
+        fieldValue = value as T[keyof T];
       }
 
       setValues((prev) => ({ ...prev, [fieldName]: fieldValue }));
@@ -156,7 +161,7 @@ export function useForm<T extends FieldValues = FieldValues>({
   );
 
   const setFieldValue = useCallback(
-    (name: keyof T, value: any) => {
+    (name: keyof T, value: T[keyof T]) => {
       setValues((prev) => ({ ...prev, [name]: value }));
 
       // Validate field when directly setting value

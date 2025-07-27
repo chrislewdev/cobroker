@@ -15,19 +15,17 @@ const ITEMS_PER_PAGE = 10;
 
 const PropertyListingPage: React.FC = () => {
   const {
-    properties,
     filteredProperties,
     propertyListState,
     fetchProperties,
     sortBy,
     setSortOption,
-    filters,
     activeFilterCount,
     resetState,
   } = usePropertyStore();
 
   // Destructure loading and error from propertyListState
-  const { loading, error } = propertyListState;
+  const { loading } = propertyListState;
 
   const router = useRouter();
   const pathname = usePathname();
@@ -183,7 +181,7 @@ const PropertyListingPage: React.FC = () => {
       // On desktop, show max 5 page numbers
       // Show current page in the middle when possible, with 2 pages before and 2 after
       let start = Math.max(1, currentPage - 2);
-      let end = Math.min(totalPages, start + 4);
+      const end = Math.min(totalPages, start + 4);
 
       // Adjust start if upper limit
       if (end === totalPages) {

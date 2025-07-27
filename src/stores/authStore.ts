@@ -212,7 +212,7 @@ const useAuthStore = create<AuthState>()(
         },
 
         // State management
-        resetState: {} as any,
+        resetState: {} as AuthState["resetState"],
       };
 
       // Generate reset functions using factory but with only the needed parts of StoreApi

@@ -10,7 +10,7 @@ export default function DashboardContent() {
           Property Management Dashboard
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Welcome back. Here's an overview of your property portfolio.
+          Welcome back. Here&apos;s an overview of your property portfolio.
         </p>
       </div>
 

@@ -3,13 +3,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeftIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import EditPropertyInfo from "@/components/property/EditPropertyInfo";
 import EditPropertyDetails from "@/components/property/EditPropertyDetails";
-import usePropertyStore from "@/stores/propertyStore";
+import usePropertyStore, { PropertyListing } from "@/stores/propertyStore";
 import { useResetOnUnmount } from "@/hooks/useStateReset";
+
+interface PendingUpdate {
+  section: "basicInfo" | "details";
+  data: Partial<PropertyListing>;
+}
 
 function EditIcon(props: React.ComponentPropsWithoutRef<"svg">) {
   return (
@@ -55,7 +59,9 @@ export default function PropertyDetailClient({
   const [editingDetails, setEditingDetails] = useState(false);
 
   // State used during saving process to prevent UI flashes
-  const [pendingUpdates, setPendingUpdates] = useState<any>(null);
+  const [pendingUpdates, setPendingUpdates] = useState<PendingUpdate | null>(
+    null
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   // Reset property detail state on component unmount
@@ -109,10 +115,13 @@ export default function PropertyDetailClient({
         console.log("Store success state reset");
       }, 50);
     }
-  }, [propertySuccess, isSaving, resetState]);
+  }, [propertySuccess, isSaving, editingBasicInfo, editingDetails, resetState]);
 
   // Unified handler for property updates
-  const handlePropertyUpdate = async (section: string, data: any) => {
+  const handlePropertyUpdate = async (
+    section: "basicInfo" | "details",
+    data: Partial<PropertyListing>
+  ) => {
     console.log(`Starting property update for ${section}:`, data);
 
     try {
@@ -145,12 +154,12 @@ export default function PropertyDetailClient({
   };
 
   // Handle basic info update with the unified handler
-  const handleBasicInfoUpdate = async (data: any) => {
+  const handleBasicInfoUpdate = async (data: Partial<PropertyListing>) => {
     await handlePropertyUpdate("basicInfo", data);
   };
 
   // Handle details update with the unified handler
-  const handleDetailsUpdate = async (data: any) => {
+  const handleDetailsUpdate = async (data: Partial<PropertyListing>) => {
     await handlePropertyUpdate("details", data);
   };
 

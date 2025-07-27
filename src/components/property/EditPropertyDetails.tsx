@@ -6,6 +6,7 @@ import FormButton from "@/components/ui_blocks/FormButton";
 import FormActions from "@/components/ui_blocks/FormActions";
 import FormStatus from "@/components/ui_blocks/FormStatus";
 import { useForm } from "@/hooks/useForm";
+import { PropertyListing } from "@/stores/propertyStore";
 
 interface EditPropertyDetailsProps {
   propertyData: {
@@ -18,7 +19,7 @@ interface EditPropertyDetailsProps {
     "sale price": number;
   };
   onCancel: () => void;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: Partial<PropertyListing>) => Promise<void>;
   isLoading?: boolean;
   isError?: boolean;
   errorMessage?: string;

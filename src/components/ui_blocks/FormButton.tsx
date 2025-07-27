@@ -7,7 +7,6 @@ import React, {
   ButtonHTMLAttributes,
   ElementType,
   ComponentPropsWithRef,
-  ReactElement,
 } from "react";
 import { cn } from "@/utils/utils";
 import Link from "next/link";
@@ -166,11 +165,14 @@ const FormButton = forwardRef<HTMLButtonElement, DefaultFormButtonProps>(
 
     // Handle Next.js Link component
     if (as === Link) {
+      const { href: propsHref, ...linkProps } = props as React.ComponentProps<
+        typeof Link
+      >;
       return (
         <Link
-          href={href || "#"}
+          href={href || propsHref || "#"}
           className={computedClassName}
-          {...(props as any)}
+          {...linkProps}
         >
           <ButtonContent
             isLoading={isLoading}
@@ -191,7 +193,7 @@ const FormButton = forwardRef<HTMLButtonElement, DefaultFormButtonProps>(
         <Component
           className={computedClassName}
           disabled={isDisabled}
-          {...(props as any)}
+          {...(props as React.ComponentProps<typeof Component>)}
         >
           <ButtonContent
             isLoading={isLoading}
