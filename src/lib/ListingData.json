@@ -1,0 +1,402 @@
+[
+  {
+    "id": "1",
+    "title": "M Astra",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Wangsa Maju",
+    "bedroom": 4,
+    "bathroom": 2,
+    "furnishing": "partially",
+    "carpark": 3,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1300",
+    "rent price": 1900,
+    "sale price": 370000,
+    "status": "active"
+  },
+  {
+    "id": "2",
+    "title": "Datum Jelatek",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Taman Keramat",
+    "bedroom": 2,
+    "bathroom": 2,
+    "furnishing": "unfurnished",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1000",
+    "rent price": 1500,
+    "sale price": 300000,
+    "status": "inactive"
+  },
+  {
+    "id": "3",
+    "title": "Laurel Residence",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Kuala Lumpur",
+    "bedroom": 3,
+    "bathroom": 3,
+    "furnishing": "fully",
+    "carpark": 1,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1200",
+    "rent price": 1800,
+    "sale price": 340000,
+    "status": "active"
+  },
+  {
+    "id": "4",
+    "title": "Gaia Residence",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Rawang",
+    "bedroom": 1,
+    "bathroom": 1,
+    "furnishing": "partially",
+    "carpark": 1,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "800",
+    "rent price": 1200,
+    "sale price": 240000,
+    "status": "inactive"
+  },
+  {
+    "id": "5",
+    "title": "Pelangi Indah",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Klang",
+    "bedroom": 3,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1100",
+    "rent price": 1600,
+    "sale price": 330000,
+    "status": "active"
+  },
+  {
+    "id": "6",
+    "title": "Taman Sri Sentosa",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Klang",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 1,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "900",
+    "rent price": 1400,
+    "sale price": 260000,
+    "status": "active"
+  },
+  {
+    "id": "7",
+    "title": "Ken Rimba Condominium 1",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Shah Alam",
+    "bedroom": 4,
+    "bathroom": 3,
+    "furnishing": "unfurnished",
+    "carpark": 3,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1400",
+    "rent price": 2100,
+    "sale price": 400000,
+    "status": "active"
+  },
+  {
+    "id": "8",
+    "title": "Pangsapuri Villamas",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Klang",
+    "bedroom": 1,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 1,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "750",
+    "rent price": 1100,
+    "sale price": 220000,
+    "status": "inactive"
+  },
+  {
+    "id": "9",
+    "title": "The Fiddlewoodz @ KL Metropolis",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Dutamas",
+    "bedroom": 5,
+    "bathroom": 3,
+    "furnishing": "fully",
+    "carpark": 3,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1500",
+    "rent price": 2300,
+    "sale price": 450000,
+    "status": "active"
+  },
+  {
+    "id": "10",
+    "title": "D'Sara Sentral",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Sungai Buloh",
+    "bedroom": 2,
+    "bathroom": 2,
+    "furnishing": "partially",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1000",
+    "rent price": 1500,
+    "sale price": 300000,
+    "status": "inactive"
+  },
+  {
+    "id": "11",
+    "title": "One South",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Seri Kembangan",
+    "bedroom": 3,
+    "bathroom": 2,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1200",
+    "rent price": 1800,
+    "sale price": 340000,
+    "status": "active"
+  },
+  {
+    "id": "12",
+    "title": "Empire City",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Damansara Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "unfurnished",
+    "carpark": 1,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "13",
+    "title": "The Capers",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Sentul",
+    "bedroom": 4,
+    "bathroom": 3,
+    "furnishing": "partially",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1350",
+    "rent price": 2000,
+    "sale price": 390000,
+    "status": "inactive"
+  },
+  {
+    "id": "14",
+    "title": "The Elements @ Ampang",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Ampang",
+    "bedroom": 3,
+    "bathroom": 2,
+    "furnishing": "partially",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1150",
+    "rent price": 1700,
+    "sale price": 320000,
+    "status": "active"
+  },
+  {
+    "id": "15",
+    "title": "Setia Sky Residences",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Jalan Tun Razak",
+    "bedroom": 5,
+    "bathroom": 3,
+    "furnishing": "fully",
+    "carpark": 3,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1500",
+    "rent price": 2300,
+    "sale price": 470000,
+    "status": "active"
+  },
+  {
+    "id": "16",
+    "title": "Savanna Executive Suites",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Southville City, Bangi",
+    "bedroom": 2,
+    "bathroom": 2,
+    "furnishing": "unfurnished",
+    "carpark": 1,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "inactive"
+  },
+  {
+    "id": "17",
+    "title": "M Vertica",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Cheras",
+    "bedroom": 3,
+    "bathroom": 2,
+    "furnishing": "partially",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1200",
+    "rent price": 1800,
+    "sale price": 340000,
+    "status": "active"
+  },
+  {
+    "id": "18",
+    "title": "The Parque Residences",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Eco Sanctuary, Kota Kemuning",
+    "bedroom": 4,
+    "bathroom": 2,
+    "furnishing": "fully",
+    "carpark": 3,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1300",
+    "rent price": 1900,
+    "sale price": 370000,
+    "status": "active"
+  },
+  {
+    "id": "19",
+    "title": "Lakeville Residence",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Taman Wahyu",
+    "bedroom": 3,
+    "bathroom": 1,
+    "furnishing": "unfurnished",
+    "carpark": 1,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1100",
+    "rent price": 1600,
+    "sale price": 310000,
+    "status": "inactive"
+  },
+  {
+    "id": "20",
+    "title": "28 Boulevard",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  }
+]
