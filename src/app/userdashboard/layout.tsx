@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, User, ClipboardList, ListChecks } from "lucide-react";
+import { LayoutDashboard, User, Building2 } from "lucide-react";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/outline";
 import { cn } from "@/utils/utils";
 import UserDashboardHeader, {
@@ -23,9 +23,9 @@ const navItems = [
   { name: "Dashboard", href: "/userdashboard", icon: LayoutDashboard },
   { name: "Profile", href: "/userdashboard/userprofile", icon: User },
   {
-    name: "Listing Management",
-    href: "/userdashboard/userlisting",
-    icon: ClipboardList,
+    name: "Property Management",
+    href: "/userdashboard/propertymanagement",
+    icon: Building2,
   },
 ];
 

@@ -1,24 +1,24 @@
-// src/app/userdashboard/userlisting/client.tsx
+// src/app/userdashboard/propertymanagement/client.tsx
 
 "use client";
 
 import React, { useEffect } from "react";
-import useListingStore from "@/stores/listingStore";
+import usePropertyStore from "@/stores/propertyStore";
 import { useSearchParams } from "next/navigation";
 import { useResetOnUnmount } from "@/hooks/useStateReset";
-import UserListingPage from "@/components/userlisting/UserListingPage";
+import PropertyListingPage from "@/components/propertylist/PropertyListingPage";
 
-export default function ListingsPageClient() {
-  const { setSortOption, resetState } = useListingStore();
+export default function PropertyManagementClient() {
+  const { setSortOption, resetState } = usePropertyStore();
   const searchParams = useSearchParams();
 
-  // Reset listing list state on component unmount
-  useResetOnUnmount(resetState.listingList);
+  // Reset property list state on component unmount
+  useResetOnUnmount(resetState.propertyList);
 
   // Apply sort option from URL if available
   useEffect(() => {
     // Reset list state before applying new sorting
-    resetState.listingList({ preserve: true });
+    resetState.propertyList({ preserve: true });
 
     const sortParam = searchParams.get("sort");
     if (sortParam) {
@@ -26,5 +26,5 @@ export default function ListingsPageClient() {
     }
   }, [searchParams, setSortOption, resetState]);
 
-  return <UserListingPage />;
+  return <PropertyListingPage />;
 }

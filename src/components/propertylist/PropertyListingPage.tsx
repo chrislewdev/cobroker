@@ -1,33 +1,33 @@
-// src/components/userlisting/UserListingPage.tsx
+// src/components/propertylist/PropertyListingPage.tsx
 
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Listing } from "@/types/listingType";
+import { PropertyListing } from "@/types/propertyType";
 import { FunnelIcon, ArrowsUpDownIcon } from "@heroicons/react/24/outline";
-import useListingStore, { ListingSortOption } from "@/stores/listingStore";
-import ActiveFilters from "@/components/listing_filter/ActiveFilters";
-import CustomFilterPanel from "@/components/listing_filter/CustomFilterPanel";
+import usePropertyStore, { PropertySortOption } from "@/stores/propertyStore";
+import PropertyActiveFilters from "@/components/property_filter/PropertyActiveFilters";
+import PropertyFilterPanel from "@/components/property_filter/PropertyFilterPanel";
 
 // Number of items to display per page
 const ITEMS_PER_PAGE = 10;
 
-const UserListingPage: React.FC = () => {
+const PropertyListingPage: React.FC = () => {
   const {
-    listings,
-    filteredListings,
-    listingListState,
-    fetchListings,
+    properties,
+    filteredProperties,
+    propertyListState,
+    fetchProperties,
     sortBy,
     setSortOption,
     filters,
     activeFilterCount,
     resetState,
-  } = useListingStore();
+  } = usePropertyStore();
 
-  // Destructure loading and error from listingListState
-  const { loading, error } = listingListState;
+  // Destructure loading and error from propertyListState
+  const { loading, error } = propertyListState;
 
   const router = useRouter();
   const pathname = usePathname();
@@ -62,12 +62,12 @@ const UserListingPage: React.FC = () => {
     };
   }, []);
 
-  // Fetch listings on component mount
+  // Fetch properties on component mount
   useEffect(() => {
-    // Reset listing list state before fetching
-    resetState.listingList();
-    fetchListings();
-  }, [fetchListings, resetState]);
+    // Reset property list state before fetching
+    resetState.propertyList();
+    fetchProperties();
+  }, [fetchProperties, resetState]);
 
   // Reset pagination when filters change
   useEffect(() => {
@@ -78,25 +78,25 @@ const UserListingPage: React.FC = () => {
     }
   }, [activeFilterCount, lastFilterCount]);
 
-  // Filter listings to only show "to do" items
-  const todoListings = filteredListings.filter(
-    (listing) => listing.status === "to do"
+  // Filter properties to only show "active" items
+  const activeProperties = filteredProperties.filter(
+    (property) => property.status === "active"
   );
 
   // Set pagination
-  const getPaginatedListings = () => {
+  const getPaginatedProperties = () => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return todoListings.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    return activeProperties.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   };
 
   // Calculate total pages (ensures at least 1 page even if empty)
   const getTotalPages = () => {
-    const total = todoListings.length;
+    const total = activeProperties.length;
     return Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
   };
 
   // Handle sort selection
-  const handleSortChange = (option: ListingSortOption) => {
+  const handleSortChange = (option: PropertySortOption) => {
     setSortOption(option);
     setShowSortDropdown(false);
     // Reset to first page when sorting changes
@@ -114,22 +114,26 @@ const UserListingPage: React.FC = () => {
   };
 
   // Get sort option display text
-  const getSortDisplayText = (option: ListingSortOption) => {
+  const getSortDisplayText = (option: PropertySortOption) => {
     switch (option) {
-      case "deadline-asc":
-        return "Deadline (Earliest First)";
-      case "deadline-desc":
-        return "Deadline (Latest First)";
-      case "budget-asc":
-        return "Budget (Low to High)";
-      case "budget-desc":
-        return "Budget (High to Low)";
-      case "date-created-asc":
-        return "Date Created (Oldest First)";
-      case "date-created-desc":
-        return "Date Created (Newest First)";
+      case "rent-price-asc":
+        return "Rent Price (Low to High)";
+      case "rent-price-desc":
+        return "Rent Price (High to Low)";
+      case "sale-price-asc":
+        return "Sale Price (Low to High)";
+      case "sale-price-desc":
+        return "Sale Price (High to Low)";
+      case "bedroom-asc":
+        return "Bedrooms (Low to High)";
+      case "bedroom-desc":
+        return "Bedrooms (High to Low)";
+      case "built-up-asc":
+        return "Built-up (Small to Large)";
+      case "built-up-desc":
+        return "Built-up (Large to Small)";
       default:
-        return "Sort Listings";
+        return "Sort Properties";
     }
   };
 
@@ -244,7 +248,7 @@ const UserListingPage: React.FC = () => {
   };
 
   // Render skeleton loading UI
-  const ListingSkeleton = ({ count = 5 }) => (
+  const PropertySkeleton = ({ count = 5 }) => (
     <>
       {Array.from({ length: count }).map((_, index) => (
         <div
@@ -263,72 +267,31 @@ const UserListingPage: React.FC = () => {
     </>
   );
 
-  // Custom Horizontal ListingCard
-  const HorizontalListingCard = ({ listing }: { listing: Listing }) => {
+  // Custom Horizontal PropertyCard
+  const HorizontalPropertyCard = ({
+    property,
+  }: {
+    property: PropertyListing;
+  }) => {
     const router = useRouter();
 
     const handleClick = () => {
-      router.push(`/userdashboard/listings/${listing.id}`);
+      router.push(`/userdashboard/properties/${property.id}`);
     };
 
-    // Format the deadline date
-    const formatDate = (dateString: string) => {
-      try {
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return dateString;
-
-        const months = [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ];
-        return `${
-          months[date.getMonth()]
-        } ${date.getDate()}, ${date.getFullYear()}`;
-      } catch (error) {
-        return dateString;
-      }
-    };
-
-    // Get topic color
-    const getTopicColor = (topic: string) => {
-      const topicColors: Record<string, string> = {
-        "Social Media":
-          "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-        "Product Review":
-          "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
-        TikTok:
-          "bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300",
-        YouTube: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
-        LinkedIn:
-          "bg-blue-200 text-blue-900 dark:bg-blue-900/40 dark:text-blue-300",
-        "Live Stream":
+    // Get furnishing color
+    const getFurnishingColor = (furnishing: string) => {
+      const furnishingColors: Record<string, string> = {
+        fully:
           "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-        Photography:
-          "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
-        "Content Writing":
-          "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300",
-        Pinterest:
-          "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
-        Podcast:
-          "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-300",
-        "Video Production":
-          "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
-        "Web Development":
-          "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300",
+        partially:
+          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+        unfurnished:
+          "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300",
       };
 
       return (
-        topicColors[topic] ||
+        furnishingColors[furnishing] ||
         "bg-gray-100 text-gray-800 dark:bg-zinc-700 dark:text-zinc-300"
       );
     };
@@ -340,26 +303,33 @@ const UserListingPage: React.FC = () => {
       >
         <div className="flex-1 mr-4">
           <h3 className="font-medium text-gray-900 dark:text-white line-clamp-1">
-            {listing.title}
+            {property.title}
           </h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {property.area} • {property.bedroom}BR/{property.bathroom}BA
+          </p>
         </div>
 
         <div className="shrink-0 w-32">
           <div
-            className={`text-sm px-2.5 py-1 rounded-full text-center ${getTopicColor(
-              listing.topic
+            className={`text-sm px-2.5 py-1 rounded-full text-center ${getFurnishingColor(
+              property.furnishing
             )}`}
           >
-            {listing.topic}
+            {property.furnishing.charAt(0).toUpperCase() +
+              property.furnishing.slice(1)}
           </div>
         </div>
 
         <div className="shrink-0 w-36 text-sm text-gray-500 dark:text-gray-400 text-center">
-          Due: {formatDate(listing.deadline)}
+          {property["built-up"]} sq ft
         </div>
 
-        <div className="shrink-0 w-24 text-sm font-medium text-gray-700 dark:text-gray-300 text-right">
-          ${listing.budget.toLocaleString()}
+        <div className="shrink-0 w-32 text-sm font-medium text-gray-700 dark:text-gray-300 text-right">
+          <div>RM{property["rent price"].toLocaleString()}/mo</div>
+          <div className="text-xs text-gray-500">
+            RM{property["sale price"].toLocaleString()}
+          </div>
         </div>
       </div>
     );
@@ -370,7 +340,7 @@ const UserListingPage: React.FC = () => {
       {/* Filtering and sorting controls */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-          To Do List
+          Property Listings
         </h1>
         <div className="flex items-center gap-3">
           {/* Filter button */}
@@ -408,81 +378,107 @@ const UserListingPage: React.FC = () => {
                 <div className="py-1">
                   <button
                     className={`block px-4 py-2 text-sm w-full text-left ${
-                      sortBy === "deadline-desc"
+                      sortBy === "rent-price-asc"
                         ? "bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-zinc-100"
                         : "text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSortChange("deadline-desc");
+                      handleSortChange("rent-price-asc");
                     }}
                   >
-                    Deadline (Latest First)
+                    Rent Price (Low to High)
                   </button>
                   <button
                     className={`block px-4 py-2 text-sm w-full text-left ${
-                      sortBy === "deadline-asc"
+                      sortBy === "rent-price-desc"
                         ? "bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-zinc-100"
                         : "text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSortChange("deadline-asc");
+                      handleSortChange("rent-price-desc");
                     }}
                   >
-                    Deadline (Earliest First)
+                    Rent Price (High to Low)
                   </button>
                   <button
                     className={`block px-4 py-2 text-sm w-full text-left ${
-                      sortBy === "budget-desc"
+                      sortBy === "sale-price-asc"
                         ? "bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-zinc-100"
                         : "text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSortChange("budget-desc");
+                      handleSortChange("sale-price-asc");
                     }}
                   >
-                    Budget (High to Low)
+                    Sale Price (Low to High)
                   </button>
                   <button
                     className={`block px-4 py-2 text-sm w-full text-left ${
-                      sortBy === "budget-asc"
+                      sortBy === "sale-price-desc"
                         ? "bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-zinc-100"
                         : "text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSortChange("budget-asc");
+                      handleSortChange("sale-price-desc");
                     }}
                   >
-                    Budget (Low to High)
+                    Sale Price (High to Low)
                   </button>
                   <button
                     className={`block px-4 py-2 text-sm w-full text-left ${
-                      sortBy === "date-created-desc"
+                      sortBy === "bedroom-asc"
                         ? "bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-zinc-100"
                         : "text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSortChange("date-created-desc");
+                      handleSortChange("bedroom-asc");
                     }}
                   >
-                    Date Created (Newest First)
+                    Bedrooms (Low to High)
                   </button>
                   <button
                     className={`block px-4 py-2 text-sm w-full text-left ${
-                      sortBy === "date-created-asc"
+                      sortBy === "bedroom-desc"
                         ? "bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-zinc-100"
                         : "text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
                     }`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSortChange("date-created-asc");
+                      handleSortChange("bedroom-desc");
                     }}
                   >
-                    Date Created (Oldest First)
+                    Bedrooms (High to Low)
+                  </button>
+                  <button
+                    className={`block px-4 py-2 text-sm w-full text-left ${
+                      sortBy === "built-up-asc"
+                        ? "bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-zinc-100"
+                        : "text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSortChange("built-up-asc");
+                    }}
+                  >
+                    Built-up (Small to Large)
+                  </button>
+                  <button
+                    className={`block px-4 py-2 text-sm w-full text-left ${
+                      sortBy === "built-up-desc"
+                        ? "bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-zinc-100"
+                        : "text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSortChange("built-up-desc");
+                    }}
+                  >
+                    Built-up (Large to Small)
                   </button>
                 </div>
               </div>
@@ -491,42 +487,42 @@ const UserListingPage: React.FC = () => {
         </div>
       </div>
 
-      <ActiveFilters resetPage={resetPage} />
+      <PropertyActiveFilters resetPage={resetPage} />
 
       <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm overflow-hidden">
         <div className="p-6">
-          {/* Task count indicator */}
+          {/* Property count indicator */}
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-semibold text-lg text-gray-800 dark:text-white">
-              To Do
+              Available Properties
             </h2>
             <span className="rounded-full bg-gray-100 dark:bg-zinc-700 px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-gray-300">
-              {loading ? "..." : todoListings.length}
+              {loading ? "..." : activeProperties.length}
             </span>
           </div>
 
-          {/* Listing items */}
+          {/* Property items */}
           <div className="space-y-2">
             {loading ? (
-              <ListingSkeleton count={5} />
-            ) : todoListings.length > 0 ? (
-              getPaginatedListings().map((listing) => (
-                <HorizontalListingCard key={listing.id} listing={listing} />
+              <PropertySkeleton count={5} />
+            ) : activeProperties.length > 0 ? (
+              getPaginatedProperties().map((property) => (
+                <HorizontalPropertyCard key={property.id} property={property} />
               ))
             ) : (
               <div className="text-center p-8 text-gray-500 dark:text-gray-400">
-                No listings in this category
+                No properties match your criteria
               </div>
             )}
           </div>
 
           {/* Pagination */}
-          {todoListings.length > 0 && renderPagination()}
+          {activeProperties.length > 0 && renderPagination()}
         </div>
       </div>
 
       {/* Filter Panel */}
-      <CustomFilterPanel
+      <PropertyFilterPanel
         isOpen={showFilterPanel}
         onClose={() => setShowFilterPanel(false)}
         resetPage={resetPage}
@@ -535,4 +531,4 @@ const UserListingPage: React.FC = () => {
   );
 };
 
-export default UserListingPage;
+export default PropertyListingPage;
