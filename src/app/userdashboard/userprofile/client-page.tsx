@@ -176,10 +176,28 @@ export default function DashboardClientPage() {
 
   // Safety check
   if (!currentUser) {
-    return <div>Loading profile...</div>;
+    return (
+      <div className="flex justify-center p-8">
+        <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+        <span className="ml-2">Loading profile...</span>
+      </div>
+    );
+  }
+
+  // Additional safety check for required properties
+  if (!currentUser.firstName || !currentUser.lastName) {
+    return (
+      <div className="flex justify-center p-8">
+        <div className="bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200 px-4 py-3 rounded-md max-w-md">
+          <p>Profile data is incomplete. Please try again later.</p>
+        </div>
+      </div>
+    );
   }
 
   function ProfileCard() {
+    if (!currentUser) return null;
+
     return (
       <div className="bg-white dark:bg-zinc-800 rounded-3xl border border-gray-200 dark:border-zinc-700 shadow-sm p-6 mb-6">
         {/* Profile card content */}
@@ -237,6 +255,8 @@ export default function DashboardClientPage() {
   }
 
   function PersonalInformation() {
+    if (!currentUser) return null;
+
     if (editingPersonalInfo) {
       return (
         <EditPersonalInfo
@@ -328,6 +348,8 @@ export default function DashboardClientPage() {
   }
 
   function Address() {
+    if (!currentUser) return null;
+
     if (editingAddress) {
       return (
         <EditAddress

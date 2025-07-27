@@ -275,6 +275,17 @@ export default function PropertyDetailClient({
   };
 
   function PropertyHeader() {
+    if (!displayProperty) {
+      return (
+        <div className="bg-white dark:bg-zinc-800 rounded-3xl border border-gray-200 dark:border-zinc-700 shadow-sm p-6 mb-6">
+          <div className="animate-pulse">
+            <div className="h-6 bg-gray-200 dark:bg-zinc-700 rounded w-3/4 mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-1/2 mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-1/3"></div>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="bg-white dark:bg-zinc-800 rounded-3xl border border-gray-200 dark:border-zinc-700 shadow-sm p-6 mb-6">
         <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between">
@@ -325,6 +336,17 @@ export default function PropertyDetailClient({
   }
 
   function BasicInformation() {
+    if (!displayProperty) {
+      return (
+        <div className="bg-white dark:bg-zinc-800 rounded-3xl border border-gray-200 dark:border-zinc-700 shadow-sm p-6 mb-6">
+          <div className="animate-pulse">
+            <div className="h-6 bg-gray-200 dark:bg-zinc-700 rounded w-3/4 mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-1/2 mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-1/3"></div>
+          </div>
+        </div>
+      );
+    }
     if (editingBasicInfo) {
       return (
         <EditPropertyInfo
@@ -419,6 +441,17 @@ export default function PropertyDetailClient({
   }
 
   function PropertyDetails() {
+    if (!displayProperty) {
+      return (
+        <div className="bg-white dark:bg-zinc-800 rounded-3xl border border-gray-200 dark:border-zinc-700 shadow-sm p-6 mb-6">
+          <div className="animate-pulse">
+            <div className="h-6 bg-gray-200 dark:bg-zinc-700 rounded w-3/4 mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-1/2 mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-1/3"></div>
+          </div>
+        </div>
+      );
+    }
     if (editingDetails) {
       return (
         <EditPropertyDetails
