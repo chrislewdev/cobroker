@@ -76,9 +76,9 @@ interface AuthState {
 
 // AsyncState mapping for reset functions
 const asyncStateMap = {
-  authState: initialAsyncState,
-  resetPasswordState: initialAsyncState,
-  forgotPasswordState: initialAsyncState,
+  authState: initialAsyncState as AsyncState<User>,
+  resetPasswordState: initialAsyncState as AsyncState<void>,
+  forgotPasswordState: initialAsyncState as AsyncState<void>,
 };
 
 // Create auth store with persistence
@@ -92,9 +92,9 @@ const useAuthStore = create<AuthState>()(
         user: null,
 
         // Async states
-        authState: initialAsyncState,
-        resetPasswordState: initialAsyncState,
-        forgotPasswordState: initialAsyncState,
+        authState: initialAsyncState as AsyncState<User>,
+        resetPasswordState: initialAsyncState as AsyncState<void>,
+        forgotPasswordState: initialAsyncState as AsyncState<void>,
 
         // Authentication actions
         login: async (email: string, password: string) => {
@@ -143,9 +143,9 @@ const useAuthStore = create<AuthState>()(
           set({
             isAuthenticated: false,
             user: null,
-            authState: initialAsyncState,
-            resetPasswordState: initialAsyncState,
-            forgotPasswordState: initialAsyncState,
+            authState: initialAsyncState as AsyncState<User>,
+            resetPasswordState: initialAsyncState as AsyncState<void>,
+            forgotPasswordState: initialAsyncState as AsyncState<void>,
           });
         },
 
@@ -212,7 +212,7 @@ const useAuthStore = create<AuthState>()(
         },
 
         // State management
-        resetState: {} as AuthState["resetState"],
+        resetState: {} as any,
       };
 
       // Generate reset functions using factory but with only the needed parts of StoreApi

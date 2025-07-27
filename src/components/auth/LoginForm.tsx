@@ -9,11 +9,11 @@ import AuthFormBase from "@/components/auth/AuthFormBase";
 import useAuthStore from "@/stores/authStore";
 import FormField from "@/components/ui_blocks/FormField";
 import FormButton from "@/components/ui_blocks/FormButton";
-import { useForm } from "@/hooks/useForm";
+import { useForm, FieldValues } from "@/hooks/useForm";
 import { useFormSubmission } from "@/hooks/useFormSubmission";
 import { useResetOnUnmount } from "@/hooks/useStateReset";
 
-interface LoginFormValues {
+interface LoginFormValues extends FieldValues {
   email: string;
   password: string;
 }
