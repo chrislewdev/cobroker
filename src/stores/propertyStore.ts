@@ -380,6 +380,9 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
 
     fetchPropertyById: async (propertyId: string) => {
       try {
+        // Clear current property immediately to prevent showing stale data
+        set({ currentProperty: null });
+
         set({ propertyDetailState: loadingState(get().propertyDetailState) });
 
         const property = await propertyService.fetchPropertyById(propertyId);
