@@ -447,13 +447,16 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
       }
     },
 
+    // In src/stores/propertyStore.ts - Updated updateProperty function (lines 352-398)
+
     updateProperty: async (
       propertyId: string,
       propertyData: Partial<PropertyListing>
     ) => {
       try {
+        // Set loading state for property detail (not mutation)
         set({
-          propertyMutationState: loadingState(get().propertyMutationState),
+          propertyDetailState: loadingState(get().propertyDetailState),
         });
 
         const updatedProperty = await propertyService.updateProperty(
@@ -482,7 +485,7 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
             : get().currentProperty;
 
         set({
-          propertyMutationState: successState(updatedProperty),
+          propertyDetailState: successState(updatedProperty), // Set success state for detail
           properties: sortedProperties,
           filteredProperties,
           currentProperty,
@@ -493,9 +496,9 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         set({
-          propertyMutationState: errorState(
+          propertyDetailState: errorState(
             errorMessage,
-            get().propertyMutationState
+            get().propertyDetailState
           ),
         });
         return null;

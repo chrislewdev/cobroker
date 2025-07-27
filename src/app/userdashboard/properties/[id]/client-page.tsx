@@ -85,24 +85,36 @@ export default function PropertyDetailClient({
 
   // Handle success state - apply to both basic info and details
   useEffect(() => {
+    console.log("Success state changed:", {
+      propertySuccess,
+      isSaving,
+      editingBasicInfo,
+      editingDetails,
+    });
+
     if (propertySuccess && isSaving) {
-      // Close edit forms after success on save
-      const timer = setTimeout(() => {
-        setEditingBasicInfo(false);
-        setEditingDetails(false);
-        setIsSaving(false);
-        setPendingUpdates(null);
+      console.log("Property update successful, cleaning up states...");
 
-        // Reset success state
+      // Immediately reset all editing states
+      setEditingBasicInfo(false);
+      setEditingDetails(false);
+      setIsSaving(false);
+      setPendingUpdates(null);
+
+      console.log("States reset, now resetting store success state...");
+
+      // Reset the success state in the store after state updates
+      setTimeout(() => {
         resetState.propertyDetail({ preserve: true });
-      }, 1000);
-
-      return () => clearTimeout(timer);
+        console.log("Store success state reset");
+      }, 50);
     }
   }, [propertySuccess, isSaving, resetState]);
 
   // Unified handler for property updates
   const handlePropertyUpdate = async (section: string, data: any) => {
+    console.log(`Starting property update for ${section}:`, data);
+
     try {
       // Set saving state to true to track the process of saving
       setIsSaving(true);
@@ -110,11 +122,20 @@ export default function PropertyDetailClient({
       // Store and display pending updates to user (optimistic UI update)
       setPendingUpdates({ section, data });
 
-      // Reset property detail state before updating
-      resetState.propertyDetail();
+      console.log("About to call updateProperty...");
 
-      // Perform the update
-      await updateProperty(propertyId, data);
+      // Perform the update (this should trigger success state in store)
+      const result = await updateProperty(propertyId, data);
+
+      console.log("updateProperty completed with result:", result);
+
+      // If update failed, reset the saving state
+      if (!result) {
+        console.log("Property update failed, resetting saving state");
+        setIsSaving(false);
+        setPendingUpdates(null);
+      }
+      // Note: If successful, the success effect above will handle cleanup
     } catch (error) {
       console.error(`Error updating ${section}:`, error);
       // Stop saving if error
@@ -131,6 +152,23 @@ export default function PropertyDetailClient({
   // Handle details update with the unified handler
   const handleDetailsUpdate = async (data: any) => {
     await handlePropertyUpdate("details", data);
+  };
+
+  // Handle cancel actions
+  const handleBasicInfoCancel = () => {
+    console.log("Canceling basic info edit");
+    setEditingBasicInfo(false);
+    setIsSaving(false);
+    setPendingUpdates(null);
+    resetState.propertyDetail({ preserve: true });
+  };
+
+  const handleDetailsCancel = () => {
+    console.log("Canceling details edit");
+    setEditingDetails(false);
+    setIsSaving(false);
+    setPendingUpdates(null);
+    resetState.propertyDetail({ preserve: true });
   };
 
   // If property is loading, show loading state
@@ -288,12 +326,7 @@ export default function PropertyDetailClient({
             area: displayProperty.area,
             status: displayProperty.status,
           }}
-          onCancel={() => {
-            setEditingBasicInfo(false);
-            setIsSaving(false);
-            setPendingUpdates(null);
-            resetState.propertyDetail({ preserve: true });
-          }}
+          onCancel={handleBasicInfoCancel}
           onSubmit={handleBasicInfoUpdate}
           isLoading={propertyLoading || isSaving}
           isError={!!propertyError}
@@ -313,6 +346,7 @@ export default function PropertyDetailClient({
           <button
             className="ml-2 px-3 py-1 text-sm rounded-full border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-1"
             onClick={() => {
+              console.log("Opening basic info edit form");
               // Reset state before opening edit form
               resetState.propertyDetail();
               setEditingBasicInfo(true);
@@ -388,12 +422,7 @@ export default function PropertyDetailClient({
             "rent price": displayProperty["rent price"],
             "sale price": displayProperty["sale price"],
           }}
-          onCancel={() => {
-            setEditingDetails(false);
-            setIsSaving(false);
-            setPendingUpdates(null);
-            resetState.propertyDetail({ preserve: true });
-          }}
+          onCancel={handleDetailsCancel}
           onSubmit={handleDetailsUpdate}
           isLoading={propertyLoading || isSaving}
           isError={!!propertyError}
@@ -413,6 +442,7 @@ export default function PropertyDetailClient({
           <button
             className="ml-2 px-3 py-1 text-sm rounded-full border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-1"
             onClick={() => {
+              console.log("Opening details edit form");
               // Reset state before opening edit form
               resetState.propertyDetail();
               setEditingDetails(true);
