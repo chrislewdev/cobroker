@@ -194,6 +194,9 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
     // Apply filters
     applyFilters();
 
+    // Reset page to first page
+    resetPage();
+
     // Close the filter panel
     onClose();
   };
@@ -296,10 +299,10 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto pt-20"
+      className="fixed inset-0 z-[100] overflow-y-auto"
       aria-labelledby="filter-panel"
     >
-      <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         {/* Background overlay */}
         <div
           className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
@@ -307,9 +310,17 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
           onClick={handleCancelFilters}
         ></div>
 
+        {/* This element is to trick the browser into centering the modal contents. */}
+        <span
+          className="hidden sm:inline-block sm:align-middle sm:h-screen"
+          aria-hidden="true"
+        >
+          &#8203;
+        </span>
+
         {/* Panel */}
-        <div className="inline-block align-bottom bg-white dark:bg-zinc-900 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <div className="px-4 pt-8 pb-4 sm:p-8 sm:pb-6">
+        <div className="relative inline-block align-bottom bg-white dark:bg-zinc-900 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div className="px-4 pt-6 pb-4 sm:p-6 sm:pb-4">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
                 Filter Properties
@@ -322,188 +333,192 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
               </button>
             </div>
 
-            <div className="mt-2 space-y-6">
-              {/* Type Filter */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Property Type
-                </h4>
-                <div className="space-y-2">
-                  {types.map((type) => (
-                    <label key={type} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={localFilters.types.includes(type)}
-                        onChange={() => handleTypeChange(type)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                        {type}
-                      </span>
-                    </label>
-                  ))}
+            {/* Scrollable content area */}
+            <div className="max-h-96 overflow-y-auto pr-2">
+              <div className="space-y-6">
+                {/* Type Filter */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Property Type
+                  </h4>
+                  <div className="space-y-2">
+                    {types.map((type) => (
+                      <label key={type} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={localFilters.types.includes(type)}
+                          onChange={() => handleTypeChange(type)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          {type}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Subtype Filter */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Property Subtype
-                </h4>
-                <div className="space-y-2">
-                  {subtypes.map((subtype) => (
-                    <label key={subtype} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={localFilters.subtypes.includes(subtype)}
-                        onChange={() => handleSubtypeChange(subtype)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                        {subtype}
-                      </span>
-                    </label>
-                  ))}
+                {/* Subtype Filter */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Property Subtype
+                  </h4>
+                  <div className="space-y-2">
+                    {subtypes.map((subtype) => (
+                      <label key={subtype} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={localFilters.subtypes.includes(subtype)}
+                          onChange={() => handleSubtypeChange(subtype)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          {subtype}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Area Filter */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Area
-                </h4>
-                <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-2">
-                  {areas.map((area) => (
-                    <label key={area} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={localFilters.areas.includes(area)}
-                        onChange={() => handleAreaChange(area)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                        {area}
-                      </span>
-                    </label>
-                  ))}
+                {/* Area Filter */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Area
+                  </h4>
+                  <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto pr-2 border border-gray-200 dark:border-zinc-700 rounded-md p-2">
+                    {areas.map((area) => (
+                      <label key={area} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={localFilters.areas.includes(area)}
+                          onChange={() => handleAreaChange(area)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          {area}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Furnishing Filter */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Furnishing
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {(["fully", "partially", "unfurnished"] as const).map(
-                    (furnishing) => (
-                      <button
-                        key={furnishing}
-                        onClick={() => handleFurnishingChange(furnishing)}
-                        className={`px-3 py-1 rounded-full text-sm ${
-                          localFilters.furnishing.includes(furnishing)
-                            ? getFurnishingButtonColor(furnishing)
-                            : "bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-gray-300"
-                        }`}
-                      >
-                        {furnishing.charAt(0).toUpperCase() +
-                          furnishing.slice(1)}
-                      </button>
-                    )
-                  )}
+                {/* Furnishing Filter */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Furnishing
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {(["fully", "partially", "unfurnished"] as const).map(
+                      (furnishing) => (
+                        <button
+                          key={furnishing}
+                          onClick={() => handleFurnishingChange(furnishing)}
+                          className={`px-3 py-1 rounded-full text-sm ${
+                            localFilters.furnishing.includes(furnishing)
+                              ? getFurnishingButtonColor(furnishing)
+                              : "bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-gray-300"
+                          }`}
+                        >
+                          {furnishing.charAt(0).toUpperCase() +
+                            furnishing.slice(1)}
+                        </button>
+                      )
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Bedroom Range Filter */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Bedrooms
-                </h4>
-                <div className="space-y-2">
-                  {[
-                    { id: "1-2", label: "1-2 Bedrooms" },
-                    { id: "3-4", label: "3-4 Bedrooms" },
-                    { id: "5+", label: "5+ Bedrooms" },
-                    { id: "", label: "Any Bedrooms" },
-                  ].map((option) => (
-                    <label key={option.id} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="bedroom-range"
-                        value={option.id}
-                        checked={getBedroomRangeValue() === option.id}
-                        onChange={() => handleBedroomRangeChange(option.id)}
-                        className="rounded-full border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                        {option.label}
-                      </span>
-                    </label>
-                  ))}
+                {/* Bedroom Range Filter */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Bedrooms
+                  </h4>
+                  <div className="space-y-2">
+                    {[
+                      { id: "1-2", label: "1-2 Bedrooms" },
+                      { id: "3-4", label: "3-4 Bedrooms" },
+                      { id: "5+", label: "5+ Bedrooms" },
+                      { id: "", label: "Any Bedrooms" },
+                    ].map((option) => (
+                      <label key={option.id} className="flex items-center">
+                        <input
+                          type="radio"
+                          name="bedroom-range"
+                          value={option.id}
+                          checked={getBedroomRangeValue() === option.id}
+                          onChange={() => handleBedroomRangeChange(option.id)}
+                          className="rounded-full border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          {option.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Rent Price Range Filter */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Rent Price Range
-                </h4>
-                <div className="space-y-2">
-                  {[
-                    { id: "under-1500", label: "Under RM1,500" },
-                    { id: "1500-2500", label: "RM1,500 - RM2,500" },
-                    { id: "over-2500", label: "Over RM2,500" },
-                    { id: "", label: "Any Rent Price" },
-                  ].map((option) => (
-                    <label key={option.id} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="rent-price-range"
-                        value={option.id}
-                        checked={getRentPriceRangeValue() === option.id}
-                        onChange={() => handleRentPriceRangeChange(option.id)}
-                        className="rounded-full border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                        {option.label}
-                      </span>
-                    </label>
-                  ))}
+                {/* Rent Price Range Filter */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Rent Price Range
+                  </h4>
+                  <div className="space-y-2">
+                    {[
+                      { id: "under-1500", label: "Under RM1,500" },
+                      { id: "1500-2500", label: "RM1,500 - RM2,500" },
+                      { id: "over-2500", label: "Over RM2,500" },
+                      { id: "", label: "Any Rent Price" },
+                    ].map((option) => (
+                      <label key={option.id} className="flex items-center">
+                        <input
+                          type="radio"
+                          name="rent-price-range"
+                          value={option.id}
+                          checked={getRentPriceRangeValue() === option.id}
+                          onChange={() => handleRentPriceRangeChange(option.id)}
+                          className="rounded-full border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          {option.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Sale Price Range Filter */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Sale Price Range
-                </h4>
-                <div className="space-y-2">
-                  {[
-                    { id: "under-300k", label: "Under RM300,000" },
-                    { id: "300k-500k", label: "RM300,000 - RM500,000" },
-                    { id: "over-500k", label: "Over RM500,000" },
-                    { id: "", label: "Any Sale Price" },
-                  ].map((option) => (
-                    <label key={option.id} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="sale-price-range"
-                        value={option.id}
-                        checked={getSalePriceRangeValue() === option.id}
-                        onChange={() => handleSalePriceRangeChange(option.id)}
-                        className="rounded-full border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                        {option.label}
-                      </span>
-                    </label>
-                  ))}
+                {/* Sale Price Range Filter */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Sale Price Range
+                  </h4>
+                  <div className="space-y-2">
+                    {[
+                      { id: "under-300k", label: "Under RM300,000" },
+                      { id: "300k-500k", label: "RM300,000 - RM500,000" },
+                      { id: "over-500k", label: "Over RM500,000" },
+                      { id: "", label: "Any Sale Price" },
+                    ].map((option) => (
+                      <label key={option.id} className="flex items-center">
+                        <input
+                          type="radio"
+                          name="sale-price-range"
+                          value={option.id}
+                          checked={getSalePriceRangeValue() === option.id}
+                          onChange={() => handleSalePriceRangeChange(option.id)}
+                          className="rounded-full border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          {option.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-50 dark:bg-zinc-800 px-4 py-3 sm:px-6 flex justify-between">
+          {/* Footer with buttons */}
+          <div className="bg-gray-50 dark:bg-zinc-800 px-4 py-3 sm:px-6 flex justify-between items-center">
             <button
               onClick={handleResetFilters}
               className="text-sm font-medium text-gray-700 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-400"
