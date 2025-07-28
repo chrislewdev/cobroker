@@ -12,6 +12,7 @@ import useProfileStore from "@/stores/profileStore";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { useResetOnUnmount } from "@/hooks/useStateReset";
 import Image from "next/image";
+import logo from "@/lib/logo.png";
 
 // Define a consistent header height
 export const HEADER_HEIGHT = "84px";
@@ -107,8 +108,8 @@ export const UserDashboardHeader: React.FC<UserDashboardHeaderProps> = ({
             <span className="sr-only">Asia Influencer X</span>
             <div className="bg-blue-600 dark:bg-blue-700 rounded-full flex items-center justify-center p-3">
               <Image
-                alt="Asia Influencer X Logo"
-                src="https://asiainfluencerx.com/wp-content/uploads/2022/10/Logo_AIX-White.png"
+                alt="Logo"
+                src={logo}
                 width={32}
                 height={32}
                 className="h-8 w-auto"
