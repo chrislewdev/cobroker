@@ -3,7 +3,6 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AuthFormBase from "@/components/auth/AuthFormBase";
 import useAuthStore from "@/stores/authStore";
@@ -96,22 +95,11 @@ const LoginForm: React.FC = () => {
     return undefined;
   };
 
-  // Create footer content
-  const footerContent = (
-    <p className="text-sm text-gray-600 dark:text-gray-400">
-      Don&apos;t have an account?{" "}
-      <Link href="/signup" className="text-black dark:text-white font-medium">
-        Get access →
-      </Link>
-    </p>
-  );
-
   return (
     <AuthFormBase
       title="Sign in to your account"
       subtitle="Welcome back! Please enter your details."
       formStatus={getFormStatus()}
-      footer={footerContent}
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <FormField
@@ -129,32 +117,20 @@ const LoginForm: React.FC = () => {
           disabled={loading || formSubmission.isSubmitting}
         />
 
-        <div>
-          <div className="flex items-center justify-between">
-            <FormField
-              label="Password"
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              value={form.values.password}
-              onChange={form.handleChange}
-              onBlur={() => form.handleBlur("password")}
-              error={form.errors.password}
-              touched={form.touched.password}
-              required
-              disabled={loading || formSubmission.isSubmitting}
-              labelClassName="flex items-center justify-between w-full"
-              containerClassName="mb-0"
-            />
-            <Link
-              href="/forgot-password"
-              className="text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 ml-1"
-            >
-              Forgot password?
-            </Link>
-          </div>
-        </div>
+        <FormField
+          label="Password"
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          value={form.values.password}
+          onChange={form.handleChange}
+          onBlur={() => form.handleBlur("password")}
+          error={form.errors.password}
+          touched={form.touched.password}
+          required
+          disabled={loading || formSubmission.isSubmitting}
+        />
 
         <FormButton
           type="submit"
