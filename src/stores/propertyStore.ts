@@ -333,9 +333,10 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
     activeFilterCount: 0,
 
     // Async states
-    propertyListState: initialAsyncState,
-    propertyDetailState: initialAsyncState,
-    propertyMutationState: initialAsyncState,
+    propertyListState: initialAsyncState as AsyncState<PropertyListing[]>,
+    propertyDetailState: initialAsyncState as AsyncState<PropertyListing>,
+    propertyMutationState:
+      initialAsyncState as AsyncState<PropertyListing | void>,
 
     // Property actions
     fetchProperties: async () => {
@@ -630,9 +631,10 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
   // Generate reset functions using factory but with only the needed parts of StoreApi
   const storeApi = { setState: set, getState: get };
   const resetFunctions = createStoreResetFunctions<PropertyState>(storeApi, {
-    propertyListState: initialAsyncState,
-    propertyDetailState: initialAsyncState,
-    propertyMutationState: initialAsyncState,
+    propertyListState: initialAsyncState as AsyncState<PropertyListing[]>,
+    propertyDetailState: initialAsyncState as AsyncState<PropertyListing>,
+    propertyMutationState:
+      initialAsyncState as AsyncState<PropertyListing | void>,
   });
 
   // Map the generated reset functions to our preferred naming

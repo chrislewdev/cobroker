@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { PropertyListing } from "@/types/propertyType";
 import { FunnelIcon, ArrowsUpDownIcon } from "@heroicons/react/24/outline";
 import usePropertyStore, { PropertySortOption } from "@/stores/propertyStore";
@@ -26,10 +26,6 @@ const PropertyListingPage: React.FC = () => {
 
   // Destructure loading and error from propertyListState
   const { loading } = propertyListState;
-
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   // State for current page (for pagination)
   const [currentPage, setCurrentPage] = useState<number>(1);

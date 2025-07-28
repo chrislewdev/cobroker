@@ -42,8 +42,8 @@ interface ProfileState {
 
 // AsyncState mapping for reset functions
 const asyncStateMap = {
-  profileState: initialAsyncState,
-  statsState: initialAsyncState,
+  profileState: initialAsyncState as AsyncState<User>,
+  statsState: initialAsyncState as AsyncState<UserStats>,
 };
 
 // Create profile store with persistence
@@ -56,8 +56,8 @@ const useProfileStore = create<ProfileState>()(
         profile: null,
 
         // Async states
-        profileState: initialAsyncState,
-        statsState: initialAsyncState,
+        profileState: initialAsyncState as AsyncState<User>,
+        statsState: initialAsyncState as AsyncState<UserStats>,
 
         // Profile actions
         fetchProfile: async (userId: string) => {
@@ -133,16 +133,16 @@ const useProfileStore = create<ProfileState>()(
         clearProfile: () => {
           set({
             profile: null,
-            profileState: initialAsyncState,
-            statsState: initialAsyncState,
+            profileState: initialAsyncState as AsyncState<User>,
+            statsState: initialAsyncState as AsyncState<UserStats>,
           });
         },
 
         // Clear profile state while preserving profile data
         clearProfileState: () => {
           set({
-            profileState: initialAsyncState,
-            statsState: initialAsyncState,
+            profileState: initialAsyncState as AsyncState<User>,
+            statsState: initialAsyncState as AsyncState<UserStats>,
           });
         },
 

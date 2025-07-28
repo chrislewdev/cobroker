@@ -37,8 +37,6 @@ export const UserDashboardHeader: React.FC<UserDashboardHeaderProps> = ({
     clearProfile,
     resetState: profileResetState,
   } = useProfileStore();
-  const { width } = useWindowSize();
-  const isMobile = width ? width < 1024 : false; // 1024px is the lg breakpoint in Tailwind
 
   // Reset both auth and profile states on component unmount
   useResetOnUnmount(authResetState.auth);
