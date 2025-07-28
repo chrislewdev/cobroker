@@ -9,7 +9,6 @@ import Link from "next/link";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import useAuthStore from "@/stores/authStore";
 import useProfileStore from "@/stores/profileStore";
-import { useWindowSize } from "@/hooks/useWindowSize";
 import { useResetOnUnmount } from "@/hooks/useStateReset";
 import Image from "next/image";
 import logo from "@/lib/logo.png";

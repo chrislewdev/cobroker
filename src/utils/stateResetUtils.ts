@@ -105,7 +105,7 @@ export function createStoreResetFunctions<T>(
   for (const key in asyncStateMap) {
     // Use an explicit key reference instead of relying on function parsing
     resetFunctions[key] = createResetFunction(
-      (state: T) => (state as any)[key],
+      (state: T) => (state as Record<string, unknown>)[key],
       store.setState,
       asyncStateMap[key],
       key // Pass the key explicitly
