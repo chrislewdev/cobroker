@@ -20,7 +20,7 @@ export const profileService = {
     }
 
     // Return user without password
-    const { password, ...userWithoutPassword } = user;
+    const { ...userWithoutPassword } = user;
     return userWithoutPassword as User;
   },
 
@@ -48,7 +48,7 @@ export const profileService = {
     };
 
     // Return user without password
-    const { password, ...userWithoutPassword } = updatedUser;
+    const { ...userWithoutPassword } = updatedUser;
     return userWithoutPassword as User;
   },
 

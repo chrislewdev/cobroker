@@ -20,7 +20,7 @@ export const authService = {
     }
 
     // Return user without password
-    const { password: _, ...userWithoutPassword } = user;
+    const { ...userWithoutPassword } = user;
     return userWithoutPassword as User;
   },
 
