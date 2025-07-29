@@ -3,7 +3,7 @@
 // mock API for property related components
 
 import initialPropertyData from "@/lib/ListingData.json";
-import { PropertyListing } from "@/stores/propertyStore";
+import { PropertyListing } from "@/types/propertyType";
 
 // Simulate creating and fetching property without backend and db
 // Use a persistent in-memory database that survives page reloads and navigation by storing it in the global window object (only in browser environment)

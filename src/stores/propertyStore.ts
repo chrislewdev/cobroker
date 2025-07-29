@@ -13,30 +13,13 @@ import {
   createStoreResetFunctions,
   ResetOptions,
 } from "@/utils/stateResetUtils";
+import { PropertyListing } from "@/types/propertyType";
 
 // Owner type
 export interface PropertyOwner {
   id: string;
   name: string;
   profilePic: string;
-}
-
-// Property type
-export interface PropertyListing {
-  id: string;
-  title: string;
-  type: string; // e.g., "Residential"
-  subtype: string; // e.g., "Apartment/Flat"
-  area: string;
-  bedroom: number;
-  bathroom: number;
-  furnishing: "fully" | "partially" | "unfurnished";
-  carpark: number;
-  owner: PropertyOwner;
-  "built-up": string;
-  "rent price": number;
-  "sale price": number;
-  status: "active" | "inactive";
 }
 
 // Sort options for properties
