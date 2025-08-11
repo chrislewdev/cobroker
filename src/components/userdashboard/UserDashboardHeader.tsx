@@ -33,7 +33,6 @@ export const UserDashboardHeader: React.FC<UserDashboardHeaderProps> = ({
   const {
     profile,
     fetchProfile,
-    clearProfile,
     resetState: profileResetState,
   } = useProfileStore();
 
