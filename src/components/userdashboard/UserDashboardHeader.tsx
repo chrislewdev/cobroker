@@ -59,10 +59,9 @@ export const UserDashboardHeader: React.FC<UserDashboardHeaderProps> = ({
     setUserMenuOpen(false);
 
     // Timeout to prevent potential recursive calls
-    // Ensures state updates from closing the menu are processed before logout operations
     setTimeout(() => {
-      // Clear profile first
-      clearProfile();
+      // Use standardized reset instead of deprecated clearProfile()
+      profileResetState.all();
 
       // Then perform logout (which will clear auth state)
       logout();

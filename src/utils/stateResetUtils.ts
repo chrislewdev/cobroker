@@ -53,12 +53,32 @@ export function createPropertyResetFunction<T, K extends keyof T>(
   };
 }
 
+const activeResets = new Set<string>();
+
 // Reset multiple state properties at once
 export function createBatchResetFunction(setters: {
   [key: string]: (options?: ResetOptions) => void;
 }) {
   return (options: ResetOptions = {}) => {
-    Object.values(setters).forEach((resetFn) => resetFn(options));
+    const resetId = Math.random().toString(36);
+
+    // Prevent infinite recursion
+    if (activeResets.has("batch-reset")) {
+      return;
+    }
+
+    activeResets.add("batch-reset");
+
+    try {
+      // Filter out the 'all' function to prevent circular calls
+      Object.entries(setters).forEach(([key, resetFn]) => {
+        if (key !== "all") {
+          resetFn(options);
+        }
+      });
+    } finally {
+      activeResets.delete("batch-reset");
+    }
   };
 }
 

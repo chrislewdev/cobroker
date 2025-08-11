@@ -101,10 +101,13 @@ const useAuthStore = create<AuthState>()(
           }
         },
 
-        // UPDATE: Use resetState internally instead of manual reset
         logout: () => {
-          // Use the standardized reset for all auth-related states
-          get().resetState.all();
+          // Clear authentication state explicitly to avoid circular calls
+          set({
+            isAuthenticated: false,
+            user: null,
+            authState: initialAsyncState as AsyncState<User>,
+          });
         },
 
         // State management
