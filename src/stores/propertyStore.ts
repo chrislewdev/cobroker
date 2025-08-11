@@ -99,6 +99,10 @@ interface PropertyState {
     propertyList: (options?: ResetOptions) => void;
     propertyDetail: (options?: ResetOptions) => void;
     propertyMutation: (options?: ResetOptions) => void;
+    currentProperty: (options?: ResetOptions) => void;
+    properties: (options?: ResetOptions) => void;
+    filteredProperties: (options?: ResetOptions) => void;
+    filters: (options?: ResetOptions) => void;
     all: (options?: ResetOptions) => void;
   };
 }
@@ -614,17 +618,31 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
   // Generate reset functions using factory but with only the needed parts of StoreApi
   const storeApi = { setState: set, getState: get };
   const resetFunctions = createStoreResetFunctions<PropertyState>(storeApi, {
-    propertyListState: initialAsyncState as AsyncState<PropertyListing[]>,
-    propertyDetailState: initialAsyncState as AsyncState<PropertyListing>,
-    propertyMutationState:
-      initialAsyncState as AsyncState<PropertyListing | void>,
+    asyncStates: {
+      propertyListState: initialAsyncState as AsyncState<PropertyListing[]>,
+      propertyDetailState: initialAsyncState as AsyncState<PropertyListing>,
+      propertyMutationState:
+        initialAsyncState as AsyncState<PropertyListing | void>,
+    },
+    properties: {
+      currentProperty: null,
+      properties: [],
+      filteredProperties: [],
+      filters: defaultFilters,
+      activeFilterCount: 0,
+      sortBy: "rent-price-asc" as PropertySortOption,
+    },
   });
 
-  // Map the generated reset functions to our preferred naming
+  // Map the reset functions
   store.resetState = {
     propertyList: resetFunctions.propertyListState,
     propertyDetail: resetFunctions.propertyDetailState,
     propertyMutation: resetFunctions.propertyMutationState,
+    currentProperty: resetFunctions.currentProperty,
+    properties: resetFunctions.properties,
+    filteredProperties: resetFunctions.filteredProperties,
+    filters: resetFunctions.filters,
     all: resetFunctions.all,
   };
 

@@ -31,20 +31,25 @@ interface ProfileState {
   fetchUserStats: (userId: string) => Promise<UserStats | null>;
 
   // State management
+  /**
+   * @deprecated Use resetState.all() instead
+   * This method will be removed in a future update
+   */
   clearProfile: () => void;
-  clearProfileState: () => void; // Add this function to the interface
+
+  /**
+   * @deprecated Use resetState.profile({ preserve: true }) and resetState.stats({ preserve: true }) instead
+   * This method will be removed in a future update
+   */
+  clearProfileState: () => void;
+
   resetState: {
     profile: (options?: ResetOptions) => void;
     stats: (options?: ResetOptions) => void;
+    profileData: (options?: ResetOptions) => void;
     all: (options?: ResetOptions) => void;
   };
 }
-
-// AsyncState mapping for reset functions
-const asyncStateMap = {
-  profileState: initialAsyncState as AsyncState<User>,
-  statsState: initialAsyncState as AsyncState<UserStats>,
-};
 
 // Create profile store with persistence
 const useProfileStore = create<ProfileState>()(
@@ -129,38 +134,44 @@ const useProfileStore = create<ProfileState>()(
           }
         },
 
-        // Clear all profile data
+        // UPDATE: Clear all profile data using resetState internally
         clearProfile: () => {
-          set({
-            profile: null,
-            profileState: initialAsyncState as AsyncState<User>,
-            statsState: initialAsyncState as AsyncState<UserStats>,
-          });
+          // Clear profile data first
+          set({ profile: null });
+          // Then use standardized reset for all states
+          get().resetState.all();
         },
 
-        // Clear profile state while preserving profile data
+        // UPDATE: Clear profile state while preserving profile data using resetState
         clearProfileState: () => {
-          set({
-            profileState: initialAsyncState as AsyncState<User>,
-            statsState: initialAsyncState as AsyncState<UserStats>,
-          });
+          // Use standardized reset with preserve option
+          get().resetState.profile({ preserve: true });
+          get().resetState.stats({ preserve: true });
         },
 
         // State management
         resetState: {} as ProfileState["resetState"],
       };
 
-      // Generate reset functions using factory but with only the needed parts of StoreApi
+      // Generate reset functions using factory
       const storeApi = { setState: set, getState: get };
-      const resetFunctions = createStoreResetFunctions<ProfileState>(
-        storeApi,
-        asyncStateMap
-      );
 
-      // Map the reset functions to our structure
+      // UPDATE: Include both async states and the profile property
+      const resetFunctions = createStoreResetFunctions<ProfileState>(storeApi, {
+        asyncStates: {
+          profileState: initialAsyncState as AsyncState<User>,
+          statsState: initialAsyncState as AsyncState<UserStats>,
+        },
+        properties: {
+          profile: null,
+        },
+      });
+
+      // UPDATE: Map the reset functions with more descriptive names
       store.resetState = {
         profile: resetFunctions.profileState,
         stats: resetFunctions.statsState,
+        profileData: resetFunctions.profile,
         all: resetFunctions.all,
       };
 

@@ -7,7 +7,8 @@ import Link from "next/link";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import EditPropertyInfo from "@/components/property/EditPropertyInfo";
 import EditPropertyDetails from "@/components/property/EditPropertyDetails";
-import usePropertyStore, { PropertyListing } from "@/stores/propertyStore";
+import usePropertyStore from "@/stores/propertyStore";
+import { PropertyListing } from "@/types/propertyType";
 import { useResetOnUnmount } from "@/hooks/useStateReset";
 
 interface PendingUpdate {
@@ -66,28 +67,19 @@ export default function PropertyDetailClient({
 
   // Reset property detail state on component unmount
   useResetOnUnmount(resetState.propertyDetail);
+  useResetOnUnmount(resetState.currentProperty);
 
   // Fetch property details on component mount or when propertyId changes
   useEffect(() => {
     if (propertyId) {
-      // Clear current property immediately to prevent showing previous property data
-      usePropertyStore.setState({ currentProperty: null });
-
-      // Reset property detail state before fetching
+      // Reset states before fetching
+      resetState.currentProperty();
       resetState.propertyDetail();
 
       // Fetch the new property
       fetchPropertyById(propertyId);
     }
   }, [propertyId, fetchPropertyById, resetState]);
-
-  // Clear current property when component unmounts or propertyId changes
-  useEffect(() => {
-    return () => {
-      // Clear current property on cleanup
-      usePropertyStore.setState({ currentProperty: null });
-    };
-  }, [propertyId]);
 
   // Handle success state - apply to both basic info and details
   useEffect(() => {

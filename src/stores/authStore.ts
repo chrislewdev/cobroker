@@ -60,14 +60,11 @@ interface AuthState {
   // State management
   resetState: {
     auth: (options?: ResetOptions) => void;
+    isAuthenticated: (options?: ResetOptions) => void;
+    user: (options?: ResetOptions) => void;
     all: (options?: ResetOptions) => void;
   };
 }
-
-// AsyncState mapping for reset functions
-const asyncStateMap = {
-  authState: initialAsyncState as AsyncState<User>,
-};
 
 // Create auth store with persistence
 const useAuthStore = create<AuthState>()(
@@ -104,28 +101,35 @@ const useAuthStore = create<AuthState>()(
           }
         },
 
+        // UPDATE: Use resetState internally instead of manual reset
         logout: () => {
-          set({
-            isAuthenticated: false,
-            user: null,
-            authState: initialAsyncState as AsyncState<User>,
-          });
+          // Use the standardized reset for all auth-related states
+          get().resetState.all();
         },
 
         // State management
         resetState: {} as AuthState["resetState"],
       };
 
-      // Generate reset functions using factory but with only the needed parts of StoreApi
+      // Generate reset functions using factory
       const storeApi = { setState: set, getState: get };
-      const resetFunctions = createStoreResetFunctions<AuthState>(
-        storeApi,
-        asyncStateMap
-      );
 
-      // Map the reset functions to our structure
+      // UPDATE: Include both async states and regular properties
+      const resetFunctions = createStoreResetFunctions<AuthState>(storeApi, {
+        asyncStates: {
+          authState: initialAsyncState as AsyncState<User>,
+        },
+        properties: {
+          isAuthenticated: false,
+          user: null,
+        },
+      });
+
+      // UPDATE: Map all reset functions including individual properties
       store.resetState = {
         auth: resetFunctions.authState,
+        isAuthenticated: resetFunctions.isAuthenticated,
+        user: resetFunctions.user,
         all: resetFunctions.all,
       };
 
