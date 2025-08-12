@@ -14,14 +14,18 @@ const PropertyActiveFilters: React.FC<PropertyActiveFiltersProps> = ({
   const {
     filters,
     areas,
+    titles,
     clearFilter,
     clearFilters,
     clearAreas,
+    clearTitles,
     activeFilterCount,
     setFilter,
     setAreas,
+    setTitles,
     applyFilters,
     applyAreasFilter,
+    applyTitlesFilter,
   } = usePropertyStore();
 
   // If no active filters, don't render
@@ -110,6 +114,30 @@ const PropertyActiveFilters: React.FC<PropertyActiveFiltersProps> = ({
             }}
             className="ml-1 focus:outline-none"
             aria-label={`Remove ${subtype} subtype filter`}
+          >
+            <XMarkIcon className="h-4 w-4" />
+          </button>
+        </div>
+      ))}
+
+      {/* Title filter chips */}
+      {titles.map((title) => (
+        <div
+          key={`title-${title}`}
+          className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
+        >
+          <span>
+            Title: {title.length > 30 ? `${title.substring(0, 30)}...` : title}
+          </span>
+          <button
+            onClick={() => {
+              const newTitles = titles.filter((t) => t !== title);
+              setTitles(newTitles);
+              applyTitlesFilter();
+              resetPage();
+            }}
+            className="ml-1 focus:outline-none"
+            aria-label={`Remove ${title} title filter`}
           >
             <XMarkIcon className="h-4 w-4" />
           </button>
