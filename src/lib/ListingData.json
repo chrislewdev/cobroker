@@ -426,8 +426,8 @@
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Pandan Perdana",
-    "bedroom": 2,
-    "bathroom": 1,
+    "bedroom": 3,
+    "bathroom": 2,
     "furnishing": "fully",
     "carpark": 2,
     "owner": {
@@ -435,9 +435,9 @@
       "name": "admin one",
       "profilePic": "/images/photos/image-1.jpg"
     },
-    "built-up": "950",
-    "rent price": 1400,
-    "sale price": 270000,
+    "built-up": "1250",
+    "rent price": 2400,
+    "sale price": 360000,
     "status": "active"
   },
   {
@@ -449,16 +449,16 @@
     "area": "Pandan Perdana",
     "bedroom": 2,
     "bathroom": 1,
-    "furnishing": "fully",
-    "carpark": 2,
+    "furnishing": "partly",
+    "carpark": 1,
     "owner": {
       "id": "1",
       "name": "admin one",
       "profilePic": "/images/photos/image-1.jpg"
     },
     "built-up": "950",
-    "rent price": 1400,
-    "sale price": 270000,
+    "rent price": 1600,
+    "sale price": 280000,
     "status": "active"
   },
   {
@@ -468,19 +468,19 @@
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Pandan Perdana",
-    "bedroom": 2,
-    "bathroom": 1,
-    "furnishing": "fully",
-    "carpark": 2,
+    "bedroom": 3,
+    "bathroom": 2,
+    "furnishing": "partly",
+    "carpark": 1,
     "owner": {
       "id": "1",
       "name": "admin one",
       "profilePic": "/images/photos/image-1.jpg"
     },
-    "built-up": "950",
-    "rent price": 1400,
-    "sale price": 270000,
-    "status": "active"
+    "built-up": "1250",
+    "rent price": 2200,
+    "sale price": 340000,
+    "status": "inactive"
   },
   {
     "id": "24",
@@ -499,8 +499,8 @@
       "profilePic": "/images/photos/image-1.jpg"
     },
     "built-up": "950",
-    "rent price": 1400,
-    "sale price": 270000,
+    "rent price": 1800,
+    "sale price": 300000,
     "status": "active"
   },
   {
@@ -510,8 +510,8 @@
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Pandan Perdana",
-    "bedroom": 2,
-    "bathroom": 1,
+    "bedroom": 3,
+    "bathroom": 2,
     "furnishing": "fully",
     "carpark": 2,
     "owner": {
@@ -519,9 +519,9 @@
       "name": "admin one",
       "profilePic": "/images/photos/image-1.jpg"
     },
-    "built-up": "950",
-    "rent price": 1400,
-    "sale price": 270000,
+    "built-up": "1250",
+    "rent price": 2600,
+    "sale price": 380000,
     "status": "active"
   },
   {
@@ -533,15 +533,15 @@
     "area": "Pandan Perdana",
     "bedroom": 2,
     "bathroom": 1,
-    "furnishing": "fully",
-    "carpark": 2,
+    "furnishing": "partly",
+    "carpark": 1,
     "owner": {
       "id": "1",
       "name": "admin one",
       "profilePic": "/images/photos/image-1.jpg"
     },
     "built-up": "950",
-    "rent price": 1400,
+    "rent price": 1500,
     "sale price": 270000,
     "status": "active"
   },
@@ -552,24 +552,24 @@
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Pandan Perdana",
-    "bedroom": 2,
-    "bathroom": 1,
-    "furnishing": "fully",
-    "carpark": 2,
+    "bedroom": 3,
+    "bathroom": 2,
+    "furnishing": "partly",
+    "carpark": 1,
     "owner": {
       "id": "1",
       "name": "admin one",
       "profilePic": "/images/photos/image-1.jpg"
     },
-    "built-up": "950",
-    "rent price": 1400,
-    "sale price": 270000,
-    "status": "active"
+    "built-up": "1250",
+    "rent price": 2100,
+    "sale price": 330000,
+    "status": "inactive"
   },
   {
-    "id": "29",
+    "id": "28",
     "title": "28 Boulevard",
-    "unit": "B-6-7",
+    "unit": "A-12-5",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Pandan Perdana",
@@ -583,8 +583,29 @@
       "profilePic": "/images/photos/image-1.jpg"
     },
     "built-up": "950",
-    "rent price": 1400,
-    "sale price": 270000,
+    "rent price": 1700,
+    "sale price": 290000,
+    "status": "active"
+  },
+  {
+    "id": "29",
+    "title": "28 Boulevard",
+    "unit": "B-6-7",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 3,
+    "bathroom": 2,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "1250",
+    "rent price": 2800,
+    "sale price": 400000,
     "status": "active"
   },
   {
@@ -596,7 +617,7 @@
     "area": "Pandan Perdana",
     "bedroom": 2,
     "bathroom": 1,
-    "furnishing": "fully",
+    "furnishing": "partly",
     "carpark": 2,
     "owner": {
       "id": "1",
@@ -605,8 +626,8 @@
     },
     "built-up": "950",
     "rent price": 1400,
-    "sale price": 270000,
-    "status": "active"
+    "sale price": 260000,
+    "status": "inactive"
   },
   {
     "id": "31",
@@ -615,18 +636,18 @@
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Pandan Perdana",
-    "bedroom": 2,
-    "bathroom": 1,
+    "bedroom": 3,
+    "bathroom": 2,
     "furnishing": "fully",
-    "carpark": 2,
+    "carpark": 1,
     "owner": {
       "id": "1",
       "name": "admin one",
       "profilePic": "/images/photos/image-1.jpg"
     },
-    "built-up": "950",
-    "rent price": 1400,
-    "sale price": 270000,
+    "built-up": "1250",
+    "rent price": 2500,
+    "sale price": 370000,
     "status": "active"
   },
   {
@@ -639,15 +660,15 @@
     "bedroom": 2,
     "bathroom": 1,
     "furnishing": "fully",
-    "carpark": 2,
+    "carpark": 1,
     "owner": {
       "id": "1",
       "name": "admin one",
       "profilePic": "/images/photos/image-1.jpg"
     },
     "built-up": "950",
-    "rent price": 1400,
-    "sale price": 270000,
+    "rent price": 1900,
+    "sale price": 310000,
     "status": "active"
   }
 ]

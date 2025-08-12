@@ -300,7 +300,7 @@ const PropertyListingPage: React.FC = () => {
             {property.title}
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {property.area} • {property.bedroom}BR/{property.bathroom}BA
+            {property.unit} • {property.bedroom}BR/{property.bathroom}BA
           </p>
         </div>
 

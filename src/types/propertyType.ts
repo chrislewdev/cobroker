@@ -3,6 +3,7 @@
 export interface PropertyListing {
   id: string;
   title: string;
+  unit: string;
   type: string; // e.g., "Residential"
   subtype: string; // e.g., "Apartment/Flat"
   area: string;
