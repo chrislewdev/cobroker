@@ -2,6 +2,7 @@
   {
     "id": "1",
     "title": "M Astra",
+    "unit": "A-1-7",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Wangsa Maju",
@@ -22,6 +23,7 @@
   {
     "id": "2",
     "title": "Datum Jelatek",
+    "unit": "A-4-2",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Taman Keramat",
@@ -42,6 +44,7 @@
   {
     "id": "3",
     "title": "Laurel Residence",
+    "unit": "A-14-6",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Kuala Lumpur",
@@ -62,6 +65,7 @@
   {
     "id": "4",
     "title": "Gaia Residence",
+    "unit": "A-22-7",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Rawang",
@@ -82,6 +86,7 @@
   {
     "id": "5",
     "title": "Pelangi Indah",
+    "unit": "B-11-2",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Klang",
@@ -102,6 +107,7 @@
   {
     "id": "6",
     "title": "Taman Sri Sentosa",
+    "unit": "B-18-5",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Klang",
@@ -122,6 +128,7 @@
   {
     "id": "7",
     "title": "Ken Rimba Condominium 1",
+    "unit": "A-16-7",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Shah Alam",
@@ -142,6 +149,7 @@
   {
     "id": "8",
     "title": "Pangsapuri Villamas",
+    "unit": "A-13-2",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Klang",
@@ -162,6 +170,7 @@
   {
     "id": "9",
     "title": "The Fiddlewoodz @ KL Metropolis",
+    "unit": "B-17-1",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Dutamas",
@@ -182,6 +191,7 @@
   {
     "id": "10",
     "title": "D'Sara Sentral",
+    "unit": "A-15-5",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Sungai Buloh",
@@ -202,6 +212,7 @@
   {
     "id": "11",
     "title": "One South",
+    "unit": "A-15-3",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Seri Kembangan",
@@ -222,6 +233,7 @@
   {
     "id": "12",
     "title": "Empire City",
+    "unit": "B-8-7",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Damansara Perdana",
@@ -242,6 +254,7 @@
   {
     "id": "13",
     "title": "The Capers",
+    "unit": "B-2-1",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Sentul",
@@ -262,6 +275,7 @@
   {
     "id": "14",
     "title": "The Elements @ Ampang",
+    "unit": "B-15-7",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Ampang",
@@ -282,6 +296,7 @@
   {
     "id": "15",
     "title": "Setia Sky Residences",
+    "unit": "A-19-9",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Jalan Tun Razak",
@@ -302,6 +317,7 @@
   {
     "id": "16",
     "title": "Savanna Executive Suites",
+    "unit": "A-19-6",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Southville City, Bangi",
@@ -322,6 +338,7 @@
   {
     "id": "17",
     "title": "M Vertica",
+    "unit": "A-25-3",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Cheras",
@@ -342,6 +359,7 @@
   {
     "id": "18",
     "title": "The Parque Residences",
+    "unit": "A-22-3",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Eco Sanctuary, Kota Kemuning",
@@ -362,6 +380,7 @@
   {
     "id": "19",
     "title": "Lakeville Residence",
+    "unit": "B-25-12",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Taman Wahyu",
@@ -382,6 +401,238 @@
   {
     "id": "20",
     "title": "28 Boulevard",
+    "unit": "B-27-11",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "21",
+    "title": "28 Boulevard",
+    "unit": "A-21-3",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "22",
+    "title": "28 Boulevard",
+    "unit": "B-7-4",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "23",
+    "title": "28 Boulevard",
+    "unit": "B-2-11",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "24",
+    "title": "28 Boulevard",
+    "unit": "B-25-10",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "25",
+    "title": "28 Boulevard",
+    "unit": "A-5-3",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "26",
+    "title": "28 Boulevard",
+    "unit": "A-19-2",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "27",
+    "title": "28 Boulevard",
+    "unit": "A-7-8",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "29",
+    "title": "28 Boulevard",
+    "unit": "B-6-7",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "30",
+    "title": "28 Boulevard",
+    "unit": "B-11-11",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "31",
+    "title": "28 Boulevard",
+    "unit": "B-18-2",
+    "type": "Residential",
+    "subtype": "Apartment/Flat",
+    "area": "Pandan Perdana",
+    "bedroom": 2,
+    "bathroom": 1,
+    "furnishing": "fully",
+    "carpark": 2,
+    "owner": {
+      "id": "1",
+      "name": "admin one",
+      "profilePic": "/images/photos/image-1.jpg"
+    },
+    "built-up": "950",
+    "rent price": 1400,
+    "sale price": 270000,
+    "status": "active"
+  },
+  {
+    "id": "32",
+    "title": "28 Boulevard",
+    "unit": "B-9-10",
     "type": "Residential",
     "subtype": "Apartment/Flat",
     "area": "Pandan Perdana",
