@@ -1,7 +1,5 @@
 // src/components/property_filter/PropertyFilterPanel.tsx
 
-// filter panel, used in property filter related components
-
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import usePropertyStore, { PropertyFilters } from "@/stores/propertyStore";
@@ -19,7 +17,7 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
 }) => {
   const { filters, setFilter, applyFilters } = usePropertyStore();
 
-  // Local state for filters (before applying)
+  // Local state for filters (before applying) - areas removed
   const [localFilters, setLocalFilters] = useState<PropertyFilters>(filters);
 
   // Update local filters when store filters change
@@ -58,23 +56,6 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
     setLocalFilters({
       ...localFilters,
       subtypes: newSubtypes,
-    });
-  };
-
-  // Handle area changes
-  const handleAreaChange = (area: string) => {
-    let newAreas: string[];
-
-    // Select/deselect area
-    if (localFilters.areas.includes(area)) {
-      newAreas = localFilters.areas.filter((a) => a !== area);
-    } else {
-      newAreas = [...localFilters.areas, area];
-    }
-
-    setLocalFilters({
-      ...localFilters,
-      areas: newAreas,
     });
   };
 
@@ -212,11 +193,10 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
 
   // Reset all filters
   const handleResetFilters = () => {
-    // Reset local filters
+    // Reset local filters (areas removed)
     setLocalFilters({
       types: [],
       subtypes: [],
-      areas: [],
       furnishing: [],
       bedroomRange: {
         min: null,
@@ -238,28 +218,6 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
 
   // Define common subtypes from your data
   const subtypes = ["Apartment/Flat"];
-
-  // Define common areas from your data
-  const areas = [
-    "Wangsa Maju",
-    "Taman Keramat",
-    "Kuala Lumpur",
-    "Rawang",
-    "Klang",
-    "Shah Alam",
-    "Dutamas",
-    "Sungai Buloh",
-    "Seri Kembangan",
-    "Damansara Perdana",
-    "Sentul",
-    "Ampang",
-    "Jalan Tun Razak",
-    "Southville City, Bangi",
-    "Cheras",
-    "Eco Sanctuary, Kota Kemuning",
-    "Taman Wahyu",
-    "Pandan Perdana",
-  ];
 
   // Get bedroom range value for radio buttons
   const getBedroomRangeValue = () => {
@@ -380,28 +338,6 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
                   </div>
                 </div>
 
-                {/* Area Filter */}
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Area
-                  </h4>
-                  <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto pr-2 border border-gray-200 dark:border-zinc-700 rounded-md p-2">
-                    {areas.map((area) => (
-                      <label key={area} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={localFilters.areas.includes(area)}
-                          onChange={() => handleAreaChange(area)}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
-                        />
-                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                          {area}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Furnishing Filter */}
                 <div>
                   <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -415,8 +351,8 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
                           onClick={() => handleFurnishingChange(furnishing)}
                           className={`px-3 py-1 rounded-full text-sm ${
                             localFilters.furnishing.includes(furnishing)
-                              ? getFurnishingButtonColor(furnishing)
-                              : "bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-gray-300"
+                              ? "bg-blue-600 text-white"
+                              : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-600"
                           }`}
                         >
                           {furnishing.charAt(0).toUpperCase() +
@@ -434,130 +370,159 @@ const PropertyFilterPanel: React.FC<PropertyFilterPanelProps> = ({
                   </h4>
                   <div className="space-y-2">
                     {[
-                      { id: "1-2", label: "1-2 Bedrooms" },
-                      { id: "3-4", label: "3-4 Bedrooms" },
-                      { id: "5+", label: "5+ Bedrooms" },
-                      { id: "", label: "Any Bedrooms" },
+                      { value: "1-2", label: "1-2 Bedrooms" },
+                      { value: "3-4", label: "3-4 Bedrooms" },
+                      { value: "5+", label: "5+ Bedrooms" },
                     ].map((option) => (
-                      <label key={option.id} className="flex items-center">
+                      <label key={option.value} className="flex items-center">
                         <input
                           type="radio"
                           name="bedroom-range"
-                          value={option.id}
-                          checked={getBedroomRangeValue() === option.id}
-                          onChange={() => handleBedroomRangeChange(option.id)}
-                          className="rounded-full border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                          value={option.value}
+                          checked={getBedroomRangeValue() === option.value}
+                          onChange={() =>
+                            handleBedroomRangeChange(option.value)
+                          }
+                          className="text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
                         />
                         <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                           {option.label}
                         </span>
                       </label>
                     ))}
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="bedroom-range"
+                        value=""
+                        checked={getBedroomRangeValue() === ""}
+                        onChange={() => handleBedroomRangeChange("")}
+                        className="text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                      />
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                        Any
+                      </span>
+                    </label>
                   </div>
                 </div>
 
                 {/* Rent Price Range Filter */}
                 <div>
                   <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Rent Price Range
+                    Rent Price (RM)
                   </h4>
                   <div className="space-y-2">
                     {[
-                      { id: "under-1500", label: "Under RM1,500" },
-                      { id: "1500-2500", label: "RM1,500 - RM2,500" },
-                      { id: "over-2500", label: "Over RM2,500" },
-                      { id: "", label: "Any Rent Price" },
+                      { value: "under-1500", label: "Under RM 1,500" },
+                      { value: "1500-2500", label: "RM 1,500 - RM 2,500" },
+                      { value: "over-2500", label: "Over RM 2,500" },
                     ].map((option) => (
-                      <label key={option.id} className="flex items-center">
+                      <label key={option.value} className="flex items-center">
                         <input
                           type="radio"
                           name="rent-price-range"
-                          value={option.id}
-                          checked={getRentPriceRangeValue() === option.id}
-                          onChange={() => handleRentPriceRangeChange(option.id)}
-                          className="rounded-full border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                          value={option.value}
+                          checked={getRentPriceRangeValue() === option.value}
+                          onChange={() =>
+                            handleRentPriceRangeChange(option.value)
+                          }
+                          className="text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
                         />
                         <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                           {option.label}
                         </span>
                       </label>
                     ))}
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="rent-price-range"
+                        value=""
+                        checked={getRentPriceRangeValue() === ""}
+                        onChange={() => handleRentPriceRangeChange("")}
+                        className="text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                      />
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                        Any
+                      </span>
+                    </label>
                   </div>
                 </div>
 
                 {/* Sale Price Range Filter */}
                 <div>
                   <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Sale Price Range
+                    Sale Price (RM)
                   </h4>
                   <div className="space-y-2">
                     {[
-                      { id: "under-300k", label: "Under RM300,000" },
-                      { id: "300k-500k", label: "RM300,000 - RM500,000" },
-                      { id: "over-500k", label: "Over RM500,000" },
-                      { id: "", label: "Any Sale Price" },
+                      { value: "under-300k", label: "Under RM 300k" },
+                      { value: "300k-500k", label: "RM 300k - RM 500k" },
+                      { value: "over-500k", label: "Over RM 500k" },
                     ].map((option) => (
-                      <label key={option.id} className="flex items-center">
+                      <label key={option.value} className="flex items-center">
                         <input
                           type="radio"
                           name="sale-price-range"
-                          value={option.id}
-                          checked={getSalePriceRangeValue() === option.id}
-                          onChange={() => handleSalePriceRangeChange(option.id)}
-                          className="rounded-full border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                          value={option.value}
+                          checked={getSalePriceRangeValue() === option.value}
+                          onChange={() =>
+                            handleSalePriceRangeChange(option.value)
+                          }
+                          className="text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
                         />
                         <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                           {option.label}
                         </span>
                       </label>
                     ))}
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="sale-price-range"
+                        value=""
+                        checked={getSalePriceRangeValue() === ""}
+                        onChange={() => handleSalePriceRangeChange("")}
+                        className="text-blue-600 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
+                      />
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                        Any
+                      </span>
+                    </label>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Footer with buttons */}
-          <div className="bg-gray-50 dark:bg-zinc-800 px-4 py-3 sm:px-6 flex justify-between items-center">
+          {/* Footer buttons */}
+          <div className="bg-gray-50 dark:bg-zinc-800 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <button
-              onClick={handleResetFilters}
-              className="text-sm font-medium text-gray-700 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-400"
+              type="button"
+              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+              onClick={handleApplyFilters}
             >
-              Reset Filters
+              Apply Filters
             </button>
-            <div className="flex space-x-2">
-              <button
-                onClick={handleCancelFilters}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:hover:bg-zinc-600"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleApplyFilters}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
-              >
-                Apply Filters
-              </button>
-            </div>
+            <button
+              type="button"
+              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600 dark:hover:bg-zinc-600"
+              onClick={handleResetFilters}
+            >
+              Reset
+            </button>
+            <button
+              type="button"
+              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600 dark:hover:bg-zinc-600"
+              onClick={handleCancelFilters}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
 };
-
-// Helper function to get furnishing button color
-function getFurnishingButtonColor(furnishing: string): string {
-  switch (furnishing) {
-    case "fully":
-      return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
-    case "partially":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
-    case "unfurnished":
-      return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300";
-    default:
-      return "bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-gray-300";
-  }
-}
 
 export default PropertyFilterPanel;

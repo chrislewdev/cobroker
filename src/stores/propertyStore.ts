@@ -33,11 +33,10 @@ export type PropertySortOption =
   | "built-up-asc"
   | "built-up-desc";
 
-// Filter options
+// Filter options (areas removed)
 export interface PropertyFilters {
   types: string[];
   subtypes: string[];
-  areas: string[];
   furnishing: ("fully" | "partially" | "unfurnished")[];
   bedroomRange: {
     min: number | null;
@@ -63,7 +62,9 @@ interface PropertyState {
   // UI state
   sortBy: PropertySortOption;
   filters: PropertyFilters;
+  areas: string[]; // Areas separated from filters
   activeFilterCount: number;
+  activeFilterCountExcludingAreas: number;
 
   // Async states
   propertyListState: AsyncState<PropertyListing[]>;
@@ -91,6 +92,11 @@ interface PropertyState {
   clearFilter: <K extends keyof PropertyFilters>(filterType: K) => void;
   applyFilters: () => void;
 
+  // Area actions
+  setAreas: (areas: string[]) => void;
+  clearAreas: () => void;
+  applyAreasFilter: () => void;
+
   // Sort actions
   setSortOption: (option: PropertySortOption) => void;
 
@@ -103,15 +109,15 @@ interface PropertyState {
     properties: (options?: ResetOptions) => void;
     filteredProperties: (options?: ResetOptions) => void;
     filters: (options?: ResetOptions) => void;
+    areas: (options?: ResetOptions) => void;
     all: (options?: ResetOptions) => void;
   };
 }
 
-// Default empty filters
+// Default filters (without areas)
 const defaultFilters: PropertyFilters = {
   types: [],
   subtypes: [],
-  areas: [],
   furnishing: [],
   bedroomRange: {
     min: null,
@@ -127,44 +133,42 @@ const defaultFilters: PropertyFilters = {
   },
 };
 
-// Helper function to sort properties based on sort option
+// Default areas
+const defaultAreas: string[] = [];
+
+// Sort properties based on the selected option
 function sortProperties(
   properties: PropertyListing[],
-  sortOption: PropertySortOption
+  sortBy: PropertySortOption
 ): PropertyListing[] {
-  const sortedProperties = [...properties]; // Create a copy to avoid mutating the original
+  const sortedProperties = [...properties];
 
-  switch (sortOption) {
+  switch (sortBy) {
     case "rent-price-asc":
       return sortedProperties.sort((a, b) => a["rent price"] - b["rent price"]);
-
     case "rent-price-desc":
       return sortedProperties.sort((a, b) => b["rent price"] - a["rent price"]);
-
     case "sale-price-asc":
       return sortedProperties.sort((a, b) => a["sale price"] - b["sale price"]);
-
     case "sale-price-desc":
       return sortedProperties.sort((a, b) => b["sale price"] - a["sale price"]);
-
     case "bedroom-asc":
       return sortedProperties.sort((a, b) => a.bedroom - b.bedroom);
-
     case "bedroom-desc":
       return sortedProperties.sort((a, b) => b.bedroom - a.bedroom);
-
     case "built-up-asc":
-      return sortedProperties.sort(
-        (a, b) => parseInt(a["built-up"]) - parseInt(b["built-up"])
-      );
-
+      return sortedProperties.sort((a, b) => {
+        const aBuiltUp = parseInt(a["built-up"].replace(/,/g, ""));
+        const bBuiltUp = parseInt(b["built-up"].replace(/,/g, ""));
+        return aBuiltUp - bBuiltUp;
+      });
     case "built-up-desc":
-      return sortedProperties.sort(
-        (a, b) => parseInt(b["built-up"]) - parseInt(a["built-up"])
-      );
-
+      return sortedProperties.sort((a, b) => {
+        const aBuiltUp = parseInt(a["built-up"].replace(/,/g, ""));
+        const bBuiltUp = parseInt(b["built-up"].replace(/,/g, ""));
+        return bBuiltUp - aBuiltUp;
+      });
     default:
-      // Default to rent price ascending
       return sortedProperties.sort((a, b) => a["rent price"] - b["rent price"]);
   }
 }
@@ -223,10 +227,11 @@ function matchesSalePriceRange(
   return true;
 }
 
-// Apply all filters to the properties
+// Apply all filters to the properties (including areas)
 function applyFiltersToProperties(
   properties: PropertyListing[],
-  filters: PropertyFilters
+  filters: PropertyFilters,
+  areas: string[]
 ): PropertyListing[] {
   return properties.filter((property) => {
     // Check if property matches type filter
@@ -238,9 +243,8 @@ function applyFiltersToProperties(
       filters.subtypes.length === 0 ||
       filters.subtypes.includes(property.subtype);
 
-    // Check if property matches area filter
-    const matchesArea =
-      filters.areas.length === 0 || filters.areas.includes(property.area);
+    // Check if property matches area filter (now separate)
+    const matchesArea = areas.length === 0 || areas.includes(property.area);
 
     // Check if property matches furnishing filter
     const matchesFurnishing =
@@ -275,13 +279,12 @@ function applyFiltersToProperties(
   });
 }
 
-// Calculate the number of active filters
+// Calculate the number of active filters (excluding areas)
 function calculateActiveFilterCount(filters: PropertyFilters): number {
   let count = 0;
 
   if (filters.types.length > 0) count++;
   if (filters.subtypes.length > 0) count++;
-  if (filters.areas.length > 0) count++;
   if (filters.furnishing.length > 0) count++;
 
   if (filters.bedroomRange.min !== null || filters.bedroomRange.max !== null) {
@@ -305,6 +308,18 @@ function calculateActiveFilterCount(filters: PropertyFilters): number {
   return count;
 }
 
+// Calculate total active filters including areas
+function calculateTotalActiveFilterCount(
+  filters: PropertyFilters,
+  areas: string[]
+): number {
+  let count = calculateActiveFilterCount(filters);
+
+  if (areas.length > 0) count++;
+
+  return count;
+}
+
 // Create property store
 const usePropertyStore = create<PropertyState>()((set, get) => {
   // Initialize the store
@@ -315,9 +330,20 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
     currentProperty: null,
 
     // UI state
-    sortBy: "rent-price-asc" as PropertySortOption, // Default sort by rent price ascending
+    sortBy: "rent-price-asc" as PropertySortOption,
     filters: defaultFilters,
+    areas: defaultAreas,
     activeFilterCount: 0,
+    activeFilterCountExcludingAreas: 0,
+
+    // Computed properties getters
+    get totalActiveFilterCount() {
+      return calculateTotalActiveFilterCount(get().filters, get().areas);
+    },
+
+    get nonAreaFilterCount() {
+      return calculateActiveFilterCount(get().filters);
+    },
 
     // Async states
     propertyListState: initialAsyncState as AsyncState<PropertyListing[]>,
@@ -338,6 +364,15 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         // Apply existing filters if any
         const filteredProperties = applyFiltersToProperties(
           sortedProperties,
+          get().filters,
+          get().areas
+        );
+
+        const activeFilterCount = calculateTotalActiveFilterCount(
+          get().filters,
+          get().areas
+        );
+        const activeFilterCountExcludingAreas = calculateActiveFilterCount(
           get().filters
         );
 
@@ -345,6 +380,8 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
           propertyListState: successState(properties),
           properties: sortedProperties,
           filteredProperties,
+          activeFilterCount,
+          activeFilterCountExcludingAreas,
         });
 
         return properties;
@@ -394,17 +431,13 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
 
         const newProperty = await propertyService.createProperty(propertyData);
 
-        // Get the current properties and sort option
+        // Add the new property to the existing properties
         const properties = [...get().properties, newProperty];
-        const sortBy = get().sortBy;
-
-        // Sort properties with the new property included
-        const sortedProperties = sortProperties(properties, sortBy);
-
-        // Apply existing filters to the new set of properties
+        const sortedProperties = sortProperties(properties, get().sortBy);
         const filteredProperties = applyFiltersToProperties(
           sortedProperties,
-          get().filters
+          get().filters,
+          get().areas
         );
 
         set({
@@ -427,16 +460,13 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
       }
     },
 
-    // In src/stores/propertyStore.ts - Updated updateProperty function (lines 352-398)
-
     updateProperty: async (
       propertyId: string,
       propertyData: Partial<PropertyListing>
     ) => {
       try {
-        // Set loading state for property detail (not mutation)
         set({
-          propertyDetailState: loadingState(get().propertyDetailState),
+          propertyMutationState: loadingState(get().propertyMutationState),
         });
 
         const updatedProperty = await propertyService.updateProperty(
@@ -444,18 +474,15 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
           propertyData
         );
 
-        // Update properties list with the updated property
+        // Update the property in the existing properties
         const properties = get().properties.map((property) =>
           property.id === propertyId ? updatedProperty : property
         );
-
-        // Sort properties with the updated property
         const sortedProperties = sortProperties(properties, get().sortBy);
-
-        // Apply existing filters to the new set of properties
         const filteredProperties = applyFiltersToProperties(
           sortedProperties,
-          get().filters
+          get().filters,
+          get().areas
         );
 
         // Update current property if it's the one being updated
@@ -465,7 +492,7 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
             : get().currentProperty;
 
         set({
-          propertyDetailState: successState(updatedProperty), // Set success state for detail
+          propertyMutationState: successState(updatedProperty),
           properties: sortedProperties,
           filteredProperties,
           currentProperty,
@@ -476,9 +503,9 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         set({
-          propertyDetailState: errorState(
+          propertyMutationState: errorState(
             errorMessage,
-            get().propertyDetailState
+            get().propertyMutationState
           ),
         });
         return null;
@@ -493,15 +520,15 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
 
         await propertyService.deleteProperty(propertyId);
 
-        // Remove the property from the properties list
+        // Remove the property from the existing properties
         const properties = get().properties.filter(
           (property) => property.id !== propertyId
         );
-
-        // Apply existing filters to the new set of properties
+        const sortedProperties = sortProperties(properties, get().sortBy);
         const filteredProperties = applyFiltersToProperties(
-          properties,
-          get().filters
+          sortedProperties,
+          get().filters,
+          get().areas
         );
 
         // Clear current property if it's the one being deleted
@@ -512,7 +539,7 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
 
         set({
           propertyMutationState: successState(undefined),
-          properties,
+          properties: sortedProperties,
           filteredProperties,
           currentProperty,
         });
@@ -531,7 +558,7 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
       }
     },
 
-    // Set a specific filter
+    // Filter actions
     setFilter: <K extends keyof PropertyFilters>(
       filterType: K,
       value: PropertyFilters[K]
@@ -546,10 +573,24 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
 
     // Clear all filters
     clearFilters: () => {
+      const filteredProperties = applyFiltersToProperties(
+        get().properties,
+        defaultFilters,
+        get().areas
+      );
+
+      const activeFilterCount = calculateTotalActiveFilterCount(
+        defaultFilters,
+        get().areas
+      );
+      const activeFilterCountExcludingAreas =
+        calculateActiveFilterCount(defaultFilters);
+
       set({
         filters: defaultFilters,
-        filteredProperties: get().properties,
-        activeFilterCount: 0,
+        filteredProperties,
+        activeFilterCount,
+        activeFilterCountExcludingAreas,
       });
     },
 
@@ -560,33 +601,86 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         [filterType]: defaultFilters[filterType],
       };
 
-      // Apply the updated filters
       const filteredProperties = applyFiltersToProperties(
         get().properties,
-        newFilters
+        newFilters,
+        get().areas
       );
 
-      // Calculate active filter count
-      const activeFilterCount = calculateActiveFilterCount(newFilters);
+      const activeFilterCount = calculateTotalActiveFilterCount(
+        newFilters,
+        get().areas
+      );
+      const activeFilterCountExcludingAreas =
+        calculateActiveFilterCount(newFilters);
 
       set({
         filters: newFilters,
         filteredProperties,
         activeFilterCount,
+        activeFilterCountExcludingAreas,
       });
     },
 
-    // Apply all current filters to the properties
     applyFilters: () => {
       const filteredProperties = applyFiltersToProperties(
         get().properties,
+        get().filters,
+        get().areas
+      );
+
+      set({
+        filteredProperties,
+      });
+    },
+
+    // Area actions
+    setAreas: (areas: string[]) => {
+      set({ areas });
+    },
+
+    clearAreas: () => {
+      const filteredProperties = applyFiltersToProperties(
+        get().properties,
+        get().filters,
+        defaultAreas
+      );
+
+      const activeFilterCount = calculateTotalActiveFilterCount(
+        get().filters,
+        defaultAreas
+      );
+      const activeFilterCountExcludingAreas = calculateActiveFilterCount(
         get().filters
       );
-      const activeFilterCount = calculateActiveFilterCount(get().filters);
+
+      set({
+        areas: defaultAreas,
+        filteredProperties,
+        activeFilterCount,
+        activeFilterCountExcludingAreas,
+      });
+    },
+
+    applyAreasFilter: () => {
+      const filteredProperties = applyFiltersToProperties(
+        get().properties,
+        get().filters,
+        get().areas
+      );
+
+      const activeFilterCount = calculateTotalActiveFilterCount(
+        get().filters,
+        get().areas
+      );
+      const activeFilterCountExcludingAreas = calculateActiveFilterCount(
+        get().filters
+      );
 
       set({
         filteredProperties,
         activeFilterCount,
+        activeFilterCountExcludingAreas,
       });
     },
 
@@ -600,7 +694,8 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
       // Apply existing filters to the sorted properties
       const filteredProperties = applyFiltersToProperties(
         sortedProperties,
-        get().filters
+        get().filters,
+        get().areas
       );
 
       // Update state with new sort option and sorted properties
@@ -629,7 +724,9 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
       properties: [],
       filteredProperties: [],
       filters: defaultFilters,
+      areas: defaultAreas,
       activeFilterCount: 0,
+      activeFilterCountExcludingAreas: 0,
       sortBy: "rent-price-asc" as PropertySortOption,
     },
   });
@@ -643,6 +740,7 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
     properties: resetFunctions.properties,
     filteredProperties: resetFunctions.filteredProperties,
     filters: resetFunctions.filters,
+    areas: resetFunctions.areas,
     all: resetFunctions.all,
   };
 
