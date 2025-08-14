@@ -15,17 +15,21 @@ const PropertyActiveFilters: React.FC<PropertyActiveFiltersProps> = ({
     filters,
     areas,
     titles,
+    status, // Add this
     clearFilter,
     clearFilters,
     clearAreas,
     clearTitles,
+    clearStatus, // Add this
     activeFilterCount,
     setFilter,
     setAreas,
     setTitles,
+    setStatus, // Add this
     applyFilters,
     applyAreasFilter,
     applyTitlesFilter,
+    applyStatusFilter, // Add this
   } = usePropertyStore();
 
   // If no active filters, don't render
@@ -166,6 +170,30 @@ const PropertyActiveFilters: React.FC<PropertyActiveFiltersProps> = ({
         </div>
       ))}
 
+      {/* Status filter chips */}
+      {status.map((statusItem) => (
+        <div
+          key={`status-${statusItem}`}
+          className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+        >
+          <span>
+            Status: {statusItem.charAt(0).toUpperCase() + statusItem.slice(1)}
+          </span>
+          <button
+            onClick={() => {
+              const newStatus = status.filter((s) => s !== statusItem);
+              setStatus(newStatus);
+              applyStatusFilter();
+              resetPage();
+            }}
+            className="ml-1 focus:outline-none"
+            aria-label={`Remove ${statusItem} status filter`}
+          >
+            <XMarkIcon className="h-4 w-4" />
+          </button>
+        </div>
+      ))}
+
       {/* Furnishing filter chips */}
       {filters.furnishing.map((furnishing) => (
         <div
@@ -258,6 +286,7 @@ const PropertyActiveFilters: React.FC<PropertyActiveFiltersProps> = ({
           clearFilters();
           clearAreas();
           clearTitles();
+          clearStatus();
           resetPage();
         }}
         className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-600"

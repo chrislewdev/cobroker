@@ -11,6 +11,7 @@ import PropertyActiveFilters from "@/components/property_filter/PropertyActiveFi
 import PropertyFilterPanel from "@/components/property_filter/PropertyFilterPanel";
 import PropertyAreaFilter from "@/components/property_filter/PropertyAreaFilter";
 import PropertyTitleFilter from "@/components/property_filter/PropertyTitleFilter";
+import PropertyStatusFilter from "@/components/property_filter/PropertyStatusFilter";
 
 // Number of items to display per page
 const ITEMS_PER_PAGE = 10;
@@ -75,10 +76,7 @@ const PropertyListingPage: React.FC = () => {
     }
   }, [activeFilterCount, lastFilterCount]);
 
-  // Filter properties to only show "active" items
-  const activeProperties = filteredProperties.filter(
-    (property) => property.status === "active"
-  );
+  const activeProperties = filteredProperties;
 
   // Set pagination
   const getPaginatedProperties = () => {
@@ -395,6 +393,9 @@ const PropertyListingPage: React.FC = () => {
           Property Listings
         </h1>
         <div className="flex items-center gap-3">
+          {/* Status filter button */}
+          <PropertyStatusFilter resetPage={resetPage} />
+
           {/* Title filter button */}
           <PropertyTitleFilter resetPage={resetPage} />
 

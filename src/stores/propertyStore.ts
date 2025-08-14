@@ -33,7 +33,7 @@ export type PropertySortOption =
   | "built-up-asc"
   | "built-up-desc";
 
-// Filter options (areas and titles removed)
+// Filter options (areas, titles, and status removed - only panel filters)
 export interface PropertyFilters {
   types: string[];
   subtypes: string[];
@@ -64,6 +64,7 @@ interface PropertyState {
   filters: PropertyFilters;
   areas: string[]; // Areas separated from filters
   titles: string[]; // Titles separated from filters
+  status: ("active" | "inactive")[]; // Status separated from filters
   activeFilterCount: number;
   activeFilterCountExcludingAreas: number;
 
@@ -103,6 +104,11 @@ interface PropertyState {
   clearTitles: () => void;
   applyTitlesFilter: () => void;
 
+  // Status actions
+  setStatus: (status: ("active" | "inactive")[]) => void;
+  clearStatus: () => void;
+  applyStatusFilter: () => void;
+
   // Sort actions
   setSortOption: (option: PropertySortOption) => void;
 
@@ -111,12 +117,6 @@ interface PropertyState {
     propertyList: (options?: ResetOptions) => void;
     propertyDetail: (options?: ResetOptions) => void;
     propertyMutation: (options?: ResetOptions) => void;
-    currentProperty: (options?: ResetOptions) => void;
-    properties: (options?: ResetOptions) => void;
-    filteredProperties: (options?: ResetOptions) => void;
-    filters: (options?: ResetOptions) => void;
-    areas: (options?: ResetOptions) => void;
-    titles: (options?: ResetOptions) => void;
     all: (options?: ResetOptions) => void;
   };
 }
@@ -140,45 +140,38 @@ const defaultFilters: PropertyFilters = {
   },
 };
 
-// Default values for areas and titles
+// Default values for standalone filters
 const defaultAreas: string[] = [];
 const defaultTitles: string[] = [];
+const defaultStatus: ("active" | "inactive")[] = ["active"]; // Default to active only
 
-// Helper function to sort properties
+// Sort properties based on the selected sort option
 function sortProperties(
   properties: PropertyListing[],
   sortBy: PropertySortOption
 ): PropertyListing[] {
-  const sorted = [...properties];
-
-  switch (sortBy) {
-    case "rent-price-asc":
-      return sorted.sort((a, b) => a["rent price"] - b["rent price"]);
-    case "rent-price-desc":
-      return sorted.sort((a, b) => b["rent price"] - a["rent price"]);
-    case "sale-price-asc":
-      return sorted.sort((a, b) => a["sale price"] - b["sale price"]);
-    case "sale-price-desc":
-      return sorted.sort((a, b) => b["sale price"] - a["sale price"]);
-    case "bedroom-asc":
-      return sorted.sort((a, b) => a.bedroom - b.bedroom);
-    case "bedroom-desc":
-      return sorted.sort((a, b) => b.bedroom - a.bedroom);
-    case "built-up-asc":
-      return sorted.sort((a, b) => {
-        const aBuiltUp = parseFloat(a["built-up"]);
-        const bBuiltUp = parseFloat(b["built-up"]);
-        return aBuiltUp - bBuiltUp;
-      });
-    case "built-up-desc":
-      return sorted.sort((a, b) => {
-        const aBuiltUp = parseFloat(a["built-up"]);
-        const bBuiltUp = parseFloat(b["built-up"]);
-        return bBuiltUp - aBuiltUp;
-      });
-    default:
-      return sorted;
-  }
+  return [...properties].sort((a, b) => {
+    switch (sortBy) {
+      case "rent-price-asc":
+        return a["rent price"] - b["rent price"];
+      case "rent-price-desc":
+        return b["rent price"] - a["rent price"];
+      case "sale-price-asc":
+        return a["sale price"] - b["sale price"];
+      case "sale-price-desc":
+        return b["sale price"] - a["sale price"];
+      case "bedroom-asc":
+        return a.bedroom - b.bedroom;
+      case "bedroom-desc":
+        return b.bedroom - a.bedroom;
+      case "built-up-asc":
+        return parseInt(a["built-up"]) - parseInt(b["built-up"]);
+      case "built-up-desc":
+        return parseInt(b["built-up"]) - parseInt(a["built-up"]);
+      default:
+        return 0;
+    }
+  });
 }
 
 // Check if a property matches the bedroom range filter
@@ -235,14 +228,53 @@ function matchesSalePriceRange(
   return true;
 }
 
-// Apply all filters to the properties (including areas and titles)
+// Apply all filters to the properties (with new Title OR Area logic)
 function applyFiltersToProperties(
   properties: PropertyListing[],
   filters: PropertyFilters,
   areas: string[],
-  titles: string[]
+  titles: string[],
+  status: ("active" | "inactive")[]
 ): PropertyListing[] {
-  return properties.filter((property) => {
+  // Step 1: Apply Title OR Area filter logic
+  let titleAreaFilteredProperties: PropertyListing[];
+
+  const hasSelectedTitles = titles.length > 0;
+  const hasSelectedAreas = areas.length > 0;
+
+  if (!hasSelectedTitles && !hasSelectedAreas) {
+    // No title or area selected - show all properties
+    titleAreaFilteredProperties = properties;
+  } else {
+    // Create a Set to avoid duplicates when combining title and area matches
+    const matchingPropertyIds = new Set<string>();
+
+    // Add properties that match selected titles
+    if (hasSelectedTitles) {
+      properties.forEach((property) => {
+        if (titles.includes(property.title)) {
+          matchingPropertyIds.add(property.id);
+        }
+      });
+    }
+
+    // Add properties that match selected areas
+    if (hasSelectedAreas) {
+      properties.forEach((property) => {
+        if (areas.includes(property.area)) {
+          matchingPropertyIds.add(property.id);
+        }
+      });
+    }
+
+    // Convert Set back to property objects
+    titleAreaFilteredProperties = properties.filter((property) =>
+      matchingPropertyIds.has(property.id)
+    );
+  }
+
+  // Step 2: Apply other filters (existing AND logic) to the title/area filtered list
+  return titleAreaFilteredProperties.filter((property) => {
     // Check if property matches type filter
     const matchesType =
       filters.types.length === 0 || filters.types.includes(property.type);
@@ -252,11 +284,9 @@ function applyFiltersToProperties(
       filters.subtypes.length === 0 ||
       filters.subtypes.includes(property.subtype);
 
-    // Check if property matches area filter
-    const matchesArea = areas.length === 0 || areas.includes(property.area);
-
-    // Check if property matches title filter
-    const matchesTitle = titles.length === 0 || titles.includes(property.title);
+    // Check if property matches status filter (standalone)
+    const matchesStatus =
+      status.length === 0 || status.includes(property.status);
 
     // Check if property matches furnishing filter
     const matchesFurnishing =
@@ -278,12 +308,11 @@ function applyFiltersToProperties(
       filters.salePriceRange
     );
 
-    // Property must match all active filters
+    // Property must match all filters
     return (
       matchesType &&
       matchesSubtype &&
-      matchesArea &&
-      matchesTitle &&
+      matchesStatus &&
       matchesFurnishing &&
       matchesBedroom &&
       matchesRentPrice &&
@@ -292,7 +321,7 @@ function applyFiltersToProperties(
   });
 }
 
-// Calculate the number of active filters (excluding areas and titles)
+// Calculate the number of active filters (excluding areas, titles, and status)
 function calculateActiveFilterCount(filters: PropertyFilters): number {
   let count = 0;
 
@@ -321,16 +350,18 @@ function calculateActiveFilterCount(filters: PropertyFilters): number {
   return count;
 }
 
-// Calculate total active filters including areas and titles
+// Calculate total active filters including areas, titles, and status
 function calculateTotalActiveFilterCount(
   filters: PropertyFilters,
   areas: string[],
-  titles: string[]
+  titles: string[],
+  status: ("active" | "inactive")[]
 ): number {
   let count = calculateActiveFilterCount(filters);
 
   if (areas.length > 0) count++;
   if (titles.length > 0) count++;
+  if (status.length > 0 && status.length !== 1) count++; // Only count if not default (single active)
 
   return count;
 }
@@ -349,6 +380,7 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
     filters: defaultFilters,
     areas: defaultAreas,
     titles: defaultTitles,
+    status: defaultStatus,
     activeFilterCount: 0,
     activeFilterCountExcludingAreas: 0,
 
@@ -371,7 +403,8 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
           sortedProperties,
           get().filters,
           get().areas,
-          get().titles
+          get().titles,
+          get().status
         );
 
         set({
@@ -437,7 +470,8 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
           sortedProperties,
           get().filters,
           get().areas,
-          get().titles
+          get().titles,
+          get().status
         );
 
         set({
@@ -483,7 +517,8 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
           sortedProperties,
           get().filters,
           get().areas,
-          get().titles
+          get().titles,
+          get().status
         );
 
         // Update current property if it's the one being updated
@@ -530,7 +565,8 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
           sortedProperties,
           get().filters,
           get().areas,
-          get().titles
+          get().titles,
+          get().status
         );
 
         // Clear current property if it's the one being deleted
@@ -579,13 +615,15 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         get().properties,
         defaultFilters,
         get().areas,
-        get().titles
+        get().titles,
+        get().status
       );
 
       const activeFilterCount = calculateTotalActiveFilterCount(
         defaultFilters,
         get().areas,
-        get().titles
+        get().titles,
+        get().status
       );
       const activeFilterCountExcludingAreas =
         calculateActiveFilterCount(defaultFilters);
@@ -609,13 +647,15 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         get().properties,
         newFilters,
         get().areas,
-        get().titles
+        get().titles,
+        get().status
       );
 
       const activeFilterCount = calculateTotalActiveFilterCount(
         newFilters,
         get().areas,
-        get().titles
+        get().titles,
+        get().status
       );
       const activeFilterCountExcludingAreas =
         calculateActiveFilterCount(newFilters);
@@ -633,7 +673,8 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         get().properties,
         get().filters,
         get().areas,
-        get().titles
+        get().titles,
+        get().status
       );
 
       set({
@@ -651,13 +692,15 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         get().properties,
         get().filters,
         defaultAreas,
-        get().titles
+        get().titles,
+        get().status
       );
 
       const activeFilterCount = calculateTotalActiveFilterCount(
         get().filters,
         defaultAreas,
-        get().titles
+        get().titles,
+        get().status
       );
       const activeFilterCountExcludingAreas = calculateActiveFilterCount(
         get().filters
@@ -676,13 +719,15 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         get().properties,
         get().filters,
         get().areas,
-        get().titles
+        get().titles,
+        get().status
       );
 
       const activeFilterCount = calculateTotalActiveFilterCount(
         get().filters,
         get().areas,
-        get().titles
+        get().titles,
+        get().status
       );
       const activeFilterCountExcludingAreas = calculateActiveFilterCount(
         get().filters
@@ -705,13 +750,15 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         get().properties,
         get().filters,
         get().areas,
-        defaultTitles
+        defaultTitles,
+        get().status
       );
 
       const activeFilterCount = calculateTotalActiveFilterCount(
         get().filters,
         get().areas,
-        defaultTitles
+        defaultTitles,
+        get().status
       );
       const activeFilterCountExcludingAreas = calculateActiveFilterCount(
         get().filters
@@ -730,13 +777,73 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         get().properties,
         get().filters,
         get().areas,
-        get().titles
+        get().titles,
+        get().status
       );
 
       const activeFilterCount = calculateTotalActiveFilterCount(
         get().filters,
         get().areas,
-        get().titles
+        get().titles,
+        get().status
+      );
+      const activeFilterCountExcludingAreas = calculateActiveFilterCount(
+        get().filters
+      );
+
+      set({
+        filteredProperties,
+        activeFilterCount,
+        activeFilterCountExcludingAreas,
+      });
+    },
+
+    // Status actions
+    setStatus: (status: ("active" | "inactive")[]) => {
+      set({ status });
+    },
+
+    clearStatus: () => {
+      const filteredProperties = applyFiltersToProperties(
+        get().properties,
+        get().filters,
+        get().areas,
+        get().titles,
+        defaultStatus
+      );
+
+      const activeFilterCount = calculateTotalActiveFilterCount(
+        get().filters,
+        get().areas,
+        get().titles,
+        defaultStatus
+      );
+      const activeFilterCountExcludingAreas = calculateActiveFilterCount(
+        get().filters
+      );
+
+      set({
+        status: defaultStatus,
+        filteredProperties,
+        activeFilterCount,
+        activeFilterCountExcludingAreas,
+      });
+    },
+
+    applyStatusFilter: () => {
+      const filteredProperties = applyFiltersToProperties(
+        get().properties,
+        get().filters,
+        get().areas,
+        get().titles,
+        get().status
+      );
+
+      const activeFilterCount = calculateTotalActiveFilterCount(
+        get().filters,
+        get().areas,
+        get().titles,
+        get().status
       );
       const activeFilterCountExcludingAreas = calculateActiveFilterCount(
         get().filters
@@ -761,10 +868,10 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         sortedProperties,
         get().filters,
         get().areas,
-        get().titles
+        get().titles,
+        get().status
       );
 
-      // Update state with new sort option and sorted properties
       set({
         sortBy: option,
         properties: sortedProperties,
@@ -772,11 +879,11 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
       });
     },
 
-    // State management
+    // Placeholder for resetState
     resetState: {} as PropertyState["resetState"],
   };
 
-  // Generate reset functions using factory but with only the needed parts of StoreApi
+  // Create reset functions using the utility
   const storeApi = { setState: set, getState: get };
   const resetFunctions = createStoreResetFunctions<PropertyState>(storeApi, {
     asyncStates: {
@@ -786,29 +893,24 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
         initialAsyncState as AsyncState<PropertyListing | void>,
     },
     properties: {
-      currentProperty: null,
       properties: [],
       filteredProperties: [],
+      currentProperty: null,
+      sortBy: "rent-price-asc" as PropertySortOption,
       filters: defaultFilters,
       areas: defaultAreas,
       titles: defaultTitles,
+      status: defaultStatus,
       activeFilterCount: 0,
       activeFilterCountExcludingAreas: 0,
-      sortBy: "rent-price-asc" as PropertySortOption,
     },
   });
 
-  // Map the reset functions
+  // Map reset functions to store
   store.resetState = {
     propertyList: resetFunctions.propertyListState,
     propertyDetail: resetFunctions.propertyDetailState,
     propertyMutation: resetFunctions.propertyMutationState,
-    currentProperty: resetFunctions.currentProperty,
-    properties: resetFunctions.properties,
-    filteredProperties: resetFunctions.filteredProperties,
-    filters: resetFunctions.filters,
-    areas: resetFunctions.areas,
-    titles: resetFunctions.titles,
     all: resetFunctions.all,
   };
 
