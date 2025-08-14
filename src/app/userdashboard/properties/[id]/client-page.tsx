@@ -45,6 +45,7 @@ export default function PropertyDetailClient({
   const {
     currentProperty,
     propertyDetailState,
+    propertyMutationState,
     fetchPropertyById,
     updateProperty,
     resetState,
@@ -55,6 +56,12 @@ export default function PropertyDetailClient({
     error: propertyError,
     success: propertySuccess,
   } = propertyDetailState;
+
+  const {
+    loading: mutationLoading,
+    error: mutationError,
+    success: mutationSuccess,
+  } = propertyMutationState;
 
   const [editingBasicInfo, setEditingBasicInfo] = useState(false);
   const [editingDetails, setEditingDetails] = useState(false);
@@ -68,6 +75,7 @@ export default function PropertyDetailClient({
   // Reset property detail state on component unmount
   useResetOnUnmount(resetState.propertyDetail);
   useResetOnUnmount(resetState.currentProperty);
+  useResetOnUnmount(resetState.propertyMutation);
 
   // Fetch property details on component mount or when propertyId changes
   useEffect(() => {
@@ -83,14 +91,14 @@ export default function PropertyDetailClient({
 
   // Handle success state - apply to both basic info and details
   useEffect(() => {
-    console.log("Success state changed:", {
-      propertySuccess,
+    console.log("Mutation success state changed:", {
+      mutationSuccess,
       isSaving,
       editingBasicInfo,
       editingDetails,
     });
 
-    if (propertySuccess && isSaving) {
+    if (mutationSuccess && isSaving) {
       console.log("Property update successful, cleaning up states...");
 
       // Immediately reset all editing states
@@ -99,15 +107,15 @@ export default function PropertyDetailClient({
       setIsSaving(false);
       setPendingUpdates(null);
 
-      console.log("States reset, now resetting store success state...");
+      console.log("States reset, now resetting store mutation state...");
 
-      // Reset the success state in the store after state updates
+      // Reset the mutation success state in the store after state updates
       setTimeout(() => {
-        resetState.propertyDetail({ preserve: true });
-        console.log("Store success state reset");
+        resetState.propertyMutation({ preserve: true });
+        console.log("Store mutation state reset");
       }, 50);
     }
-  }, [propertySuccess, isSaving, editingBasicInfo, editingDetails, resetState]);
+  }, [mutationSuccess, isSaving, editingBasicInfo, editingDetails, resetState]);
 
   // Unified handler for property updates
   const handlePropertyUpdate = async (
@@ -162,6 +170,7 @@ export default function PropertyDetailClient({
     setIsSaving(false);
     setPendingUpdates(null);
     resetState.propertyDetail({ preserve: true });
+    resetState.propertyMutation({ preserve: true });
   };
 
   const handleDetailsCancel = () => {
@@ -170,6 +179,7 @@ export default function PropertyDetailClient({
     setIsSaving(false);
     setPendingUpdates(null);
     resetState.propertyDetail({ preserve: true });
+    resetState.propertyMutation({ preserve: true });
   };
 
   // If property is loading, show loading state

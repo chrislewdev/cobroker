@@ -117,6 +117,7 @@ interface PropertyState {
     propertyList: (options?: ResetOptions) => void;
     propertyDetail: (options?: ResetOptions) => void;
     propertyMutation: (options?: ResetOptions) => void;
+    currentProperty: (options?: ResetOptions) => void;
     all: (options?: ResetOptions) => void;
   };
 }
@@ -911,6 +912,7 @@ const usePropertyStore = create<PropertyState>()((set, get) => {
     propertyList: resetFunctions.propertyListState,
     propertyDetail: resetFunctions.propertyDetailState,
     propertyMutation: resetFunctions.propertyMutationState,
+    currentProperty: resetFunctions.currentProperty,
     all: resetFunctions.all,
   };
 
