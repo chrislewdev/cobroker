@@ -10,6 +10,7 @@ import usePropertyStore, { PropertySortOption } from "@/stores/propertyStore";
 import PropertyActiveFilters from "@/components/property_filter/PropertyActiveFilters";
 import PropertyFilterPanel from "@/components/property_filter/PropertyFilterPanel";
 import PropertyAreaFilter from "@/components/property_filter/PropertyAreaFilter";
+import PropertyTitleFilter from "@/components/property_filter/PropertyTitleFilter";
 
 // Number of items to display per page
 const ITEMS_PER_PAGE = 10;
@@ -394,6 +395,9 @@ const PropertyListingPage: React.FC = () => {
           Property Listings
         </h1>
         <div className="flex items-center gap-3">
+          {/* Title filter button */}
+          <PropertyTitleFilter resetPage={resetPage} />
+
           {/* Area filter button */}
           <PropertyAreaFilter resetPage={resetPage} />
 

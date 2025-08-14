@@ -257,6 +257,7 @@ const PropertyActiveFilters: React.FC<PropertyActiveFiltersProps> = ({
         onClick={() => {
           clearFilters();
           clearAreas();
+          clearTitles();
           resetPage();
         }}
         className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-600"
